@@ -1,0 +1,10 @@
+ROMX $6
+	org $4000
+	"bank6"
+
+WRAM0
+	org $c000
+	"WRAM Bank 0"
+
+	org $c300
+	"OAM Buffer"
