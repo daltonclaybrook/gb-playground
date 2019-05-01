@@ -5,15 +5,15 @@
 * **Tilesets**: The tile image data itself.
   * Each Tileset file represents a block of pixels to be loaded into the Tileset VRAM.
   * From what I can tell, this data is always loaded into `$9000` - `$97FF`
-    * $8000 - $8FFF seems to be reserved for sprite tiles
+    * `$8000` - `$8FFF` seems to be reserved for sprite tiles
   * In the Pokemon project, running `make` will take all Tileset `.png` files and run them through `rgbgfx` to create `.2bpp` files for use in the Gameboy.
   * These may be 1-1 associated with a Blockset, but not sure
     * e.g. "overworld.2bpp" <-> "overworld.bst"
 * **Blocksets**: A binary list of "blocks" which are sets of 4x4 tiles
   * Each Block takes up 16 bytes; each byte points to a tile in a Tileset
-    * The byte is an offset from $9000 in VRAM, e.g. $2C -> $902C
-  * Blocks in a Blockset have incremental "IDs" ($01, $02, $03, etc)
-    * A block ID * $10 equals the blocks starting location in the Blockset file
+    * The byte is an offset from `$9000` in VRAM, e.g. `$2C` -> `$902C`
+  * Blocks in a Blockset have incremental "IDs" (`$01`, `$02`, `$03`, etc)
+    * A block ID * `$10` equals the blocks starting location in the Blockset file
   * Blocksets are generic like Tilesets and can be used in many different locations throughout the game
 * **Block Maps**: A binary list of "Block IDs" which refer to locations in a Blockset
   * These are specific areas in the game, such as "Pallet Town"
@@ -45,7 +45,7 @@ Still a bit fuzzy on how the data finally ends up in VRAM, but it seems like it 
 ### Block Map is loaded into WRAM
 
 * Space has been predefined at `wOverworldMap` for the Map block IDs (1300 bytes)
-* All 1300 ($0514) bytes are filled with a background tile at  `[wMapBackgroundTile]`
+* All 1300 (`$0514`) bytes are filled with a background tile at  `[wMapBackgroundTile]`
 * `[hMapWidth]` is loaded from `[wCurMapWidth]` (not sure why this needs to be put in HRAM...)
 * `[hMapStride]` is put in VRAM as the map width + `MAP_BORDER` * 2
 * A pointer is created at `wOverworldMap` + `[hMapStride]` * `MAP_BORDER` + `MAP_BORDER`. This will be the location of the first tile block on the upper west side of the map accounting for border.
@@ -91,22 +91,12 @@ Still a bit fuzzy on how the data finally ends up in VRAM, but it seems like it 
   * Repeated for each row
 * The original rom bank is restored
 
+### `[wTileMap]` is loaded into the BG Map in VRAM
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-* Loop through Map and load each tile of each block into WRAM. If the map is 10x10 blocks, that means 1600 bytes are loaded into WRAM (40x40 tiles)
-* Tiles are loaded into BG Map VRAM. Since the BG map is 32x32 tiles, but the Map can be any size, new tiles are loaded into VRAM as the user walks and the map is scrolled.
+* Pointers are created to `[wTileMap]` and `$9800` (BG Map 1)
+* Each row of 20 tiles is copied to the BG Map
+  * A row is copied, counting down from 20
+  * the destination pointer is incremented by 32 - 20 (a BG Map is 32 x 32 tiles)
+  * Repeated for each row
+* The LCD is re-enabled (I might be doing this twice, but I should figure out why once isn't working)
+* The original ROM bank is restored from before the original call to `LoadMapData`
