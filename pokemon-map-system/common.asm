@@ -13,10 +13,10 @@ WaitVBlank::
 
 DisableLCD::
 	xor a
-	ld [rIF], a
+	ld [rIF], a ; cancel any interrupt requests
 	ld a, [rIE]
 	ld b, a
-	res 0, a
+	res 0, a ; disable the VBlank interrupt
 	ld [rIE], a
 
 .wait
@@ -25,10 +25,10 @@ DisableLCD::
 	jr nz, .wait
 
 	ld a, [rLCDC]
-	and $ff ^ rLCDC_ENABLE_MASK
+	res rLCDC_ENABLE, a ; reset the LCD enable bit
 	ld [rLCDC], a
 	ld a, b
-	ld [rIE], a
+	ld [rIE], a ; reenable any interrupt handlers that were disabled
 	ret
 
 EnableLCD::

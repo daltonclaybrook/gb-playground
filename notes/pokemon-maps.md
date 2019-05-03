@@ -28,8 +28,6 @@
 
 ## Procedure for loading a Map
 
-Still a bit fuzzy on how the data finally ends up in VRAM, but it seems like it goes:
-
 ### Map metadata is loaded into RAM
 
 * `[wCurMap]` is added to `MapHeaderPointers` to get location to correct map header
@@ -47,7 +45,7 @@ Still a bit fuzzy on how the data finally ends up in VRAM, but it seems like it 
 * Space has been predefined at `wOverworldMap` for the Map block IDs (1300 bytes)
 * All 1300 (`$0514`) bytes are filled with a background tile at  `[wMapBackgroundTile]`
 * `[hMapWidth]` is loaded from `[wCurMapWidth]` (not sure why this needs to be put in HRAM...)
-* `[hMapStride]` is put in VRAM as the map width + `MAP_BORDER` * 2
+* `[hMapStride]` is put in HRAM as the map width + `MAP_BORDER` * 2
 * A pointer is created at `wOverworldMap` + `[hMapStride]` * `MAP_BORDER` + `MAP_BORDER`. This will be the location of the first tile block on the upper west side of the map accounting for border.
 * Each row of block ID bytes stored at `[wMapDataPtr]` is copied to the incrementing pointer location, then the pointer is incremented by `[hMapStride]` to account for the border
 * Connections are setup (Don't really care about this at the moment).
@@ -69,7 +67,7 @@ Still a bit fuzzy on how the data finally ends up in VRAM, but it seems like it 
 * Count down register is set to a constant `$600` which is 6 rows of tiles and the full size of the Gfx file
 * Tiles are loaded into VRAM sequentially
 
-### Block map is loaded into WRAM
+### Block map tiles are loaded into WRAM
 
 * Switch to the ROM bank in `[wTilesetBank]`
 * Pointer is created to `[wCurrentTileBlockMapViewPointer]`. I am manually setting this variable in `world.asm` to match the value I observed when debugging the full Pokemon game. This pointer value is `[wOverworldMap]` + an offset determined at runtime based on the player's location in the map. The value I set (`[wOverworldMap] + $43`) is right in front of Ash's house.
