@@ -22,8 +22,9 @@ LoadMap::
 LoadMapMetadata::
     ld a, [wCurMap]
     ld b, a
-    ld c, 0
-    ld hl, MapHeaders
+    ld c, 5 ; multiply index by 5 bytes, which is the size of the map header struct
+    call Multiply
+    ld bc, MapHeaders
     add hl, bc
     ld d, h
     ld e, l
@@ -37,7 +38,7 @@ LoadMapBlocks::
     ld a, [wMapBackgroundBlockID]
     ld d, a
     ld hl, wMapBlocks
-    ld bc, $1300 ; count of bytes in background buffer
+    ld bc, 1300 ; count of bytes in background buffer
 .backgroundLoop
     ld a, d
     ld [hli], a ; fill the whole map block buffer with the background block ID
@@ -59,9 +60,9 @@ LoadMapBlocks::
     jr nz, .topBorderLoop
     ld e, MAP_BORDER
     add hl, de ; hl is now at the upper left portion of the map accounting for borders
-    ld a, [wCurMapBlockData]
+    ld a, [wCurMapBlockDataPtr]
     ld e, a
-    ld a, [wCurMapBlockData + 1]
+    ld a, [wCurMapBlockDataPtr + 1]
     ld d, a ; de = pointer to map block data
     ld a, [wCurMapHeight]
     ld c, a ; c = counter for map height
@@ -90,6 +91,17 @@ LoadMapBlocks::
 
 ; Load tileset info into WRAM
 LoadTilesetMetadata::
+    ld a, [wCurMapTileset] ; get index of current tileset
+    ld b, a
+    ld c, 4 ; multiply by 4, the size of the tileset header struct
+    call Multiply
+    ld bc, TilesetHeaders
+    add hl, bc
+    ld d, h
+    ld e, l
+    ld hl, wCurTilesetBlocksPtr
+    ld bc, 4 ; load two pointers worth of data into WRAM
+    call CopyData
     ret
 
 ; Load Tileset tiles into VRAM

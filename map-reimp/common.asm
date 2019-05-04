@@ -45,3 +45,22 @@ CopyData::
 	or b
     jr nz, CopyData
     ret
+
+; Multiply two 8-bit numbers
+;
+; b = factor 1
+; c = factor 2
+; hl = result
+Multiply::
+    ld hl, 0
+    ld d, 0
+    ld e, b
+    xor a
+    cp c
+    jr z, .finish
+.loop
+    add hl, de
+    dec c
+    jr nz, .loop
+.finish
+    ret

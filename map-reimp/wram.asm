@@ -17,7 +17,7 @@ wCurMapWidth::
     ds 1
 
 ; memory address of block map file
-wCurMapBlockData::
+wCurMapBlockDataPtr::
     ds 2
 
 ; block ID used to fill the border of the map
@@ -33,3 +33,11 @@ wMapBlocks::
 ; [wCurMapWidth] + MAP_BORDER * 2
 wCurMapStride::
     ds 1
+
+; pointer to the tileset blocks data
+wCurTilesetBlocksPtr::
+    ds 2
+
+; pointer to the tileset gfx data
+wCurTilesetGfxPtr::
+    ds 2
