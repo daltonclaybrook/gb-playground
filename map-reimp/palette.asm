@@ -18,28 +18,106 @@ MainBGPalette3::
     RGB 10, 10, 10
     RGB 0, 0, 0
 
+EveryBGPalette::
+	RGB 31, 31, 31
+    RGB 29, 26, 14
+    RGB 11, 21, 20
+    RGB 27, 12, 9
+	RGB 26, 14, 3
+	RGB 23, 9, 28
+	RGB 24, 3, 9
+	RGB 15, 5, 5
+	RGB 4, 18, 22
+	RGB 22, 7, 28
+	RGB 8, 15, 4
+	RGB 24, 20, 24
+	RGB 19, 18, 25
+	RGB 1, 10, 26
+	RGB 29, 4, 25
+	RGB 29, 13, 21
+	RGB 16, 26, 17
+	RGB 23, 9, 10
+	RGB 21, 22, 11
+	RGB 28, 12, 11
+	RGB 9, 6, 8
+	RGB 0, 21, 26
+	RGB 28, 26, 9
+	RGB 13, 29, 17
+	RGB 10, 7, 15
+	RGB 26, 27, 4
+	RGB 28, 31, 19
+	RGB 8, 9, 1
+	RGB 4, 20, 5
+	RGB 19, 0, 20
+	RGB 0, 3, 12
+	RGB 23, 23, 18
+EveryBGPaletteEnd::
+
 ConfigureBGPalette::
-    ; call SelectBGPalette3
+    ; call SelectRandomBGPalettes
+    ld d, 0
+    call SelectBGPaletteAtIndex
     ld a, %10000000
     ld [rBCPS], a
-    ld hl, MainBGPalette2
+    ld hl, EveryBGPalette
     ld de, rBCPD
-    ld c, 8 ; copy 8 bytes
+    ld bc, EveryBGPaletteEnd - EveryBGPalette
 .loop
     ld a, [hli]
     ld [de], a
-    dec c
+    dec bc
+    ld a, c
+    or b
     jr nz, .loop
     ret
 
-SelectBGPalette3::
+; Select a specific background palette
+;
+; d = index
+SelectBGPaletteAtIndex::
     ld a, 1
     ld [rVBK], a
     ld hl, _SCRN0
     ld bc, 32 * 32 ; full map of 32 x 32 tiles
 .loop
-    ld a, 3
+    ld a, d
     ld [hli], a
+    dec bc
+    ld a, c
+    or b
+    jr nz, .loop
+    xor a
+    ld [rVBK], a
+    ret
+
+RandomPalettes::
+    db 6, 3, 0, 5, 6, 5, 1, 0, 2, 1, 3, 6, 0, 1, 0, 7, 3, 2, 4, 7
+RandomPalettesEnd::
+
+SelectRandomBGPalettes::
+    ld a, 1
+    ld [rVBK], a
+    ld hl, _SCRN0
+    ld bc, 32 * 32 ; full map of 32 x 32 tiles
+    ld de, 0
+.loop
+    push de
+    push hl
+    ld hl, RandomPalettes
+    add hl, de
+    ld d, h
+    ld e, l
+    pop hl ; hl = next VRAM destination. de = random palette address
+
+    ld a, [de]
+    ld [hli], a
+    pop de ; de = random palette index
+    inc de
+    ld a, e
+    sub 17 ; count of random palette indexes
+    jr nz, .continue
+    ld de, 0
+.continue
     dec bc
     ld a, c
     or b
