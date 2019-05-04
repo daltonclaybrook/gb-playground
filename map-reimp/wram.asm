@@ -54,4 +54,7 @@ section "Tile Map Data", wram0[$c528] ; making this a round number for testing p
 ;
 ; (e.g. if menus are drawn on top)
 wTileMapBackup::
-	ds 20 * 18 ; width * height of screen
+	ds 24 * 20 ; 6 x 5 blocks of 4x4 tiles
+
+wTileMap::
+    ds 20 * 18 ; width * height of screen

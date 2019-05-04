@@ -14,6 +14,7 @@ LoadMap::
     call LoadTilesetMetadata
     call LoadTilesetGFX
     call LoadMapTiles
+    call CopyMapTilesToScreenBuffer
     call CopyTilesToVRAM
     call EnableLCD
     ret
@@ -156,6 +157,27 @@ LoadMapTiles::
     dec c
     jr nz, .rowLoop
     ret
+
+CopyMapTilesToScreenBuffer::
+    ld hl, wTileMap
+    ld de, wTileMapBackup
+    ld bc, SCREEN_HEIGHT
+.rowLoop
+    push bc
+    ld bc, SCREEN_WIDTH
+    call CopyData
+    ld a, 4 ; incrememnt de by 4 because `wTileMapBackup` has 4 more tiles per row than `wTileMap`
+    add e
+    ld e, a
+    jr nc, .noCarry
+    inc d
+.noCarry
+    pop bc
+    dec bc
+    ld a, c
+    or b
+    jr nz, .rowLoop
+    ret    
 
 ; Copy the visible portion of the map into VRAM
 CopyTilesToVRAM::
