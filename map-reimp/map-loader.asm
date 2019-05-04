@@ -106,6 +106,13 @@ LoadTilesetMetadata::
 
 ; Load Tileset tiles into VRAM
 LoadTilesetGFX::
+    ld hl, $9000 ; destination in VRAM for the tileset
+    ld a, [wCurTilesetGfxPtr]
+    ld e, a
+    ld a, [wCurTilesetGfxPtr + 1]
+    ld d, a ; de = pointer to current tileset GFX
+    ld bc, $600 ; counter equals 6 rows of tiles
+    call CopyData
     ret
 
 ; Load tiles for the current map into WRAM by referencing the map blocks file and the blocket
