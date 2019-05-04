@@ -29,3 +29,7 @@ wMapBackgroundBlockID::
 ; All block IDs for the current map plus the border
 wMapBlocks::
     ds 1300
+
+; [wCurMapWidth] + MAP_BORDER * 2
+wCurMapStride::
+    ds 1

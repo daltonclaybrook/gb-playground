@@ -34,6 +34,58 @@ LoadMapMetadata::
 
 ; Load block IDs from a map block file into WRAM
 LoadMapBlocks::
+    ld a, [wMapBackgroundBlockID]
+    ld d, a
+    ld hl, wMapBlocks
+    ld bc, $1300 ; count of bytes in background buffer
+.backgroundLoop
+    ld a, d
+    ld [hli], a ; fill the whole map block buffer with the background block ID
+    dec bc
+    ld a, b
+    or c
+    jr nz, .backgroundLoop
+
+    ld hl, wMapBlocks ; hl = pointer to first map block
+    ld a, [wCurMapWidth]
+    add MAP_BORDER * 2 ; a = map stride
+    ld [wCurMapStride], a
+    ld d, 0
+    ld e, a ; de = map stride
+    ld c, MAP_BORDER ; count down
+.topBorderLoop
+    add hl, de ; move the hl pointer down `MAP_BORDER` rows
+    dec c
+    jr nz, .topBorderLoop
+    ld e, MAP_BORDER
+    add hl, de ; hl is now at the upper left portion of the map accounting for borders
+    ld a, [wCurMapBlockData]
+    ld e, a
+    ld a, [wCurMapBlockData + 1]
+    ld d, a ; de = pointer to map block data
+    ld a, [wCurMapHeight]
+    ld c, a ; c = counter for map height
+.rowLoop
+    push bc
+    push hl
+    ld a, [wCurMapWidth]
+    ld c, a ; c = counter for map width
+.innerRowLoop
+    ld a, [de]
+    ld [hli], a
+    inc de
+    dec c
+    jr nz, .innerRowLoop
+    pop hl
+    ld a, [wCurMapStride]
+    add l
+    ld l, a
+    jr nc, .noCarry
+    inc h
+.noCarry
+    pop bc
+    dec c
+    jr nz, .rowLoop
     ret
 
 ; Load tileset info into WRAM

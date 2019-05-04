@@ -14,6 +14,8 @@ section "Game", rom0[$150]
 Start::
     ld a, PALLET_TOWN_MAP
     ld [wCurMap], a
+    ld a, 4
+    ld [wMapBackgroundBlockID], a
     call LoadMap
 .gameLoop
     jr .gameLoop
