@@ -14,8 +14,16 @@ section "Game", rom0[$150]
 Start::
     ld a, PALLET_TOWN_MAP_2
     ld [wCurMap], a
+
     ld a, 4
     ld [wMapBackgroundBlockID], a
+
+    ld hl, wCurBlockMap + $33 ; upper left of map without border
+    ld a, l
+    ld [wCurBlockMapViewPtr], a
+    ld a, h
+    ld [wCurBlockMapViewPtr + 1], a
+
     call LoadMap
 .gameLoop
     jr .gameLoop

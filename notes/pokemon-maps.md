@@ -72,7 +72,7 @@
 * Switch to the ROM bank in `[wTilesetBank]`
 * Pointer is created to `[wCurrentTileBlockMapViewPointer]`. I am manually setting this variable in `world.asm` to match the value I observed when debugging the full Pokemon game. This pointer value is `[wOverworldMap]` + an offset determined at runtime based on the player's location in the map. The value I set (`[wOverworldMap] + $43`) is right in front of Ash's house.
 * Pointer is created to the destination address `[wTileMapBackup]`
-* A row of six tile blocks are copied to the destination. (The screen can display 20 tiles by 18 tiles, so this is just enough to fill the screen and then some)
+* A row of six tile blocks are copied to the destination. (The screen can display 20 tiles by 18 tiles, so this is just enough to fill the screen plus one block)
   * Blocks are made up of 4x4 tiles
   * In the `DrawTileBlock` procedure, each row of tiles for a specific block is copied. After a row has been drawn, the destination pointer is incremented by `$15` which equals `$04 * $06 - $03` (the width of a row in tiles minus the three times the destination pointer has already been incremented)
   * The other three rows in the block are copied this same way

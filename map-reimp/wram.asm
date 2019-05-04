@@ -27,7 +27,7 @@ wMapBackgroundBlockID::
     ds 1
 
 ; All block IDs for the current map plus the border
-wMapBlocks::
+wCurBlockMap::
     ds 1300
 
 ; [wCurMapWidth] + MAP_BORDER * 2
@@ -41,3 +41,17 @@ wCurTilesetBlocksPtr::
 ; pointer to the tileset gfx data
 wCurTilesetGfxPtr::
     ds 2
+
+; an offset from [wCurBlockMap] to draw to the upper left corner of the screen
+;
+; [wCurBlockMapViewPtr] = y * [wCurMapStride] + x + [wCurBlockMap] 
+wCurBlockMapViewPtr::
+    ds 2
+
+section "Tile Map Data", wram0[$c528] ; making this a round number for testing purposes
+
+; buffer for temporarily saving and restoring current screen's tiles
+;
+; (e.g. if menus are drawn on top)
+wTileMapBackup::
+	ds 20 * 18 ; width * height of screen

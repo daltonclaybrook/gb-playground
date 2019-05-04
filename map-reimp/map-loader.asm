@@ -37,7 +37,7 @@ LoadMapMetadata::
 LoadMapBlocks::
     ld a, [wMapBackgroundBlockID]
     ld d, a
-    ld hl, wMapBlocks
+    ld hl, wCurBlockMap
     ld bc, 1300 ; count of bytes in background buffer
 .backgroundLoop
     ld a, d
@@ -47,7 +47,7 @@ LoadMapBlocks::
     or c
     jr nz, .backgroundLoop
 
-    ld hl, wMapBlocks ; hl = pointer to first map block
+    ld hl, wCurBlockMap ; hl = pointer to first map block
     ld a, [wCurMapWidth]
     add MAP_BORDER * 2 ; a = map stride
     ld [wCurMapStride], a
@@ -111,14 +111,102 @@ LoadTilesetGFX::
     ld e, a
     ld a, [wCurTilesetGfxPtr + 1]
     ld d, a ; de = pointer to current tileset GFX
-    ld bc, $600 ; counter equals 6 rows of tiles
+    ld bc, $600 ; counter equals 6 rows of $10 tiles, each with 8x8 pixels
     call CopyData
     ret
 
 ; Load tiles for the current map into WRAM by referencing the map blocks file and the blocket
 LoadMapTiles::
+    ld a, [wCurBlockMapViewPtr]
+    ld e, a
+    ld a, [wCurBlockMapViewPtr + 1]
+    ld d, a
+
+    ld hl, wTileMapBackup    
+    ld c, 5 ; 5 rows
+.rowLoop
+    push de ; store the pointer to the first block ID on the current row
+    push bc ; store pointer to the row countdown
+    ld c, 6 ; 6 blocks per row
+.blockLoopInRow
+    ld a, [de]
+    inc de
+    push bc
+    push de
+    push hl
+    ld c, a
+    call DrawTileBlock
+    pop hl
+    pop de
+    ld bc, 4
+    add hl, bc ; move four spaces to the right
+    pop bc
+    dec c
+    jr nz, .blockLoopInRow
+    ld bc, $48 ; move hl down 3 rows (hl has already wrapped one row)
+    add hl, bc
+    pop bc ; row countdown
+    pop de ; pointer to first block ID on current row
+    ld a, [wCurMapStride]
+    add e
+    ld e, a
+    jr nc, .noCarry
+    inc d
+.noCarry ; de = pointer to the first block ID on the next row
+    dec c
+    jr nz, .rowLoop
     ret
 
 ; Copy the visible portion of the map into VRAM
 CopyTilesToVRAM::
+    ret
+
+; **********************
+; Helper Functions
+; **********************
+
+; Copy an 8x8 block of tiles to the tile map in WRAM
+;
+; Input:
+; c = block ID
+; hl = address to start drawing block
+DrawTileBlock::
+    push hl
+    ld a, c ; Multiply block id by $10
+	swap a
+	ld b, a
+	and $f0
+	ld c, a
+	ld a, b
+	and $0f
+	ld b, a ; bc = tile block ID * $10
+    ld a, [wCurTilesetBlocksPtr]
+    ld l, a
+    ld a, [wCurTilesetBlocksPtr + 1]
+    ld h, a ; hl = pointer to first tileset block
+    add hl, bc
+    ld d, h
+    ld e, l ; de = pointer to block to draw
+    pop hl ; hl = address to start drawing block
+
+    ld c, 4 ; c = row countdown
+.rowLoop
+    push bc
+    ld a, [de] ; copy four tiles
+    ld [hli], a
+    inc de
+    ld a, [de]
+    ld [hli], a
+    inc de
+    ld a, [de]
+    ld [hli], a
+    inc de
+    ld a, [de]
+    ld [hl], a
+    inc de
+    ld bc, $15 ; move to next row: 4 tiles * 6 blocks - 3 (hl has already been incremented 3 times)
+    add hl, bc
+    pop bc
+    dec c
+    jr nz, .rowLoop
     ret
