@@ -10,6 +10,7 @@ section "Map Loader", rom0[$200]
 LoadMap::
     call DisableLCD
     call ConfigureLCDForTileset
+    call ConfigureBGPalette
     call LoadMapMetadata
     call LoadMapBlocks
     call LoadTilesetMetadata
@@ -254,3 +255,5 @@ DrawTileBlock::
     dec c
     jr nz, .rowLoop
     ret
+
+include "palette.asm"

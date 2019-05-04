@@ -1,3 +1,5 @@
 *.gb
 *.o
 *.sym
+*.gbc
+*.sav

@@ -28,3 +28,11 @@ const: MACRO
 \1 EQU const_value
 const_value = const_value + 1
 ENDM
+
+; Define a two-byte RGB color
+;
+; color value intensities range from 0 - 31
+; e.g. RGB 31, 31, 31 is white
+RGB: MACRO
+    dw (\3 << 10 | \2 << 5 | \1)
+ENDM
