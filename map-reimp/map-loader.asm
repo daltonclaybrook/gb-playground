@@ -9,6 +9,7 @@ section "Map Loader", rom0[$200]
 ; [wCurMap] is used as input
 LoadMap::
     call DisableLCD
+    call ConfigureLCDForTileset
     call LoadMapMetadata
     call LoadMapBlocks
     call LoadTilesetMetadata
@@ -17,6 +18,13 @@ LoadMap::
     call CopyMapTilesToScreenBuffer
     call CopyTilesToVRAM
     call EnableLCD
+    ret
+
+; Sets the LCD controller to use the correct tileset address in VRAM
+ConfigureLCDForTileset::
+    ld a, [rLCDC]
+    res rLCDC_TILE_SELECT, a ; select tileset $8800-$97ff in VRAM
+    ld [rLCDC], a
     ret
 
 ; Load map info into WRAM
@@ -181,6 +189,20 @@ CopyMapTilesToScreenBuffer::
 
 ; Copy the visible portion of the map into VRAM
 CopyTilesToVRAM::
+    ld hl, _SCRN0 ; ($9800) Location of BG Map 1 in VRAM
+    ld de, wTileMap
+    ld bc, SCREEN_HEIGHT
+.rowLoop
+    push bc
+    ld bc, SCREEN_WIDTH
+    call CopyData
+    ld bc, 32 - SCREEN_WIDTH ; BG Map has 32 width, but our tile map is only SCREEN_WIDTH 
+    add hl, bc
+    pop bc
+    dec bc
+    ld a, c
+    or b
+    jr nz, .rowLoop
     ret
 
 ; **********************
