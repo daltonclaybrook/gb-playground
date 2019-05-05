@@ -1,8 +1,4 @@
-include "common.asm"
-include "maps.asm"
-include "wram.asm"
-
-section "Map Loader", rom0[$200]
+section "Map Loader", rom0
 
 ; Loads and displays the current map
 ;

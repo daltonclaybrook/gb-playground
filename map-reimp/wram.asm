@@ -48,7 +48,7 @@ wCurTilesetGfxPtr::
 wCurBlockMapViewPtr::
     ds 2
 
-section "Tile Map Data", wram0[$c528] ; making this a round number for testing purposes
+section "Tile Map Data", wram0
 
 ; buffer for temporarily saving and restoring current screen's tiles
 ;

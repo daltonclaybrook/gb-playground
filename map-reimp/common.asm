@@ -1,6 +1,3 @@
-include "hardware.inc"
-include "constants.asm"
-
 section "LCD Control", rom0
 
 DisableLCD::

@@ -1,6 +1,4 @@
-include "macros.asm"
-
-section "Binaries", rom0[$1000]
+section "Binaries", rom0
 
     const_def
     const OVERWORLD_TILESET ; $00
