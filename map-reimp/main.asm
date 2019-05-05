@@ -1,7 +1,22 @@
+include "hardware.inc"
+include "hram.asm"
+
+; Hardware interrupts
+section "vblank", rom0[$40]
+	jp VBlank
+section "hblank", rom0[$48]
+	reti
+section "timer", rom0[$50]
+	reti
+section "serial", rom0[$58]
+	reti
+section "joypad", rom0[$60]
+	reti
+
 section "Header", rom0[$100]
 
 EntryPoint::
-    di ; disable interrupts
+    di
     jp Start
 
     ds $150 - $104 ; initialize this space with zeros. These bytes will be replaced with the Gameboy header information.
@@ -15,6 +30,12 @@ section "Game", rom0[$150]
 
 ; Game Start
 Start::
+	xor a
+	ld [rIF], a
+	ld [rIE], a
+    ld [hSCX], a
+    ld [hSCY], a
+
     ld a, PALLET_TOWN_MAP_2
     ld [wCurMap], a
 
@@ -28,11 +49,28 @@ Start::
     ld [wCurBlockMapViewPtr + 1], a
 
     call LoadMap
+
+    ld a, IEF_VBLANK | IEF_TIMER | IEF_SERIAL
+    ld [rIE], a
+
+    ei
+
+    ; ld b, 0 ; hSCX
 .gameLoop
+;     ld c, 20 ; countdown
+; .waitLoop
+;     halt
+;     dec c
+;     jr nz, .waitLoop
+;     inc b
+;     ld a, b
+;     ld [hSCY], a
+;     ld [hSCX], a
     jr .gameLoop
 
-include "hardware.inc"
 include "constants.asm"
 include "common.asm"
 include "wram.asm"
 include "map-loader.asm"
+include "joypad.asm"
+include "vblank.asm"
