@@ -1,4 +1,5 @@
 include "hardware.inc"
+include "constants.asm"
 include "hram.asm"
 
 ; Hardware interrupts
@@ -55,20 +56,25 @@ Start::
 
     ei
 
-    ; ld b, 0 ; hSCX
 .gameLoop
-;     ld c, 20 ; countdown
-; .waitLoop
-;     halt
-;     dec c
-;     jr nz, .waitLoop
-;     inc b
-;     ld a, b
-;     ld [hSCY], a
-;     ld [hSCX], a
+    call DelayFrame
+    call UpdateJoypadState
+    ld a, [hJoyHeld]
+    ld b, a
+    bit JOYPAD_RIGHT_BIT, b
+    jr z, .checkScrollLeft
+    ld a, [hSCX]
+    inc a
+    ld [hSCX], a
+.checkScrollLeft
+    bit JOYPAD_LEFT_BIT, b
+    jr z, .continue
+    ld a, [hSCX]
+    dec a
+    ld [hSCX], a
+.continue
     jr .gameLoop
 
-include "constants.asm"
 include "common.asm"
 include "wram.asm"
 include "map-loader.asm"
