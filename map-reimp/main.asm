@@ -59,20 +59,7 @@ Start::
 .gameLoop
     call DelayFrame
     call UpdateJoypadState
-    ld a, [hJoyHeld]
-    ld b, a
-    bit JOYPAD_RIGHT_BIT, b
-    jr z, .checkScrollLeft
-    ld a, [hSCX]
-    inc a
-    ld [hSCX], a
-.checkScrollLeft
-    bit JOYPAD_LEFT_BIT, b
-    jr z, .continue
-    ld a, [hSCX]
-    dec a
-    ld [hSCX], a
-.continue
+    call AdvancePlayer
     jr .gameLoop
 
 include "common.asm"
@@ -80,3 +67,4 @@ include "wram.asm"
 include "map-loader.asm"
 include "joypad.asm"
 include "vblank.asm"
+include "player.asm"

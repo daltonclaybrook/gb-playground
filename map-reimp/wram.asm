@@ -48,6 +48,28 @@ wCurTilesetGfxPtr::
 wCurBlockMapViewPtr::
     ds 2
 
+section "Player Data", wram0
+
+; player's current Y movement direction
+wPlayerDeltaY::
+    ds 1
+
+; player's current X movement direction
+wPlayerDeltaX::
+    ds 1
+
+; player's current Y coord
+wPlayerY::
+    ds 1
+
+; player's current X coord
+wPlayerX::
+    ds 1
+
+; player walk counter
+wWalkCounter::
+    ds 1
+
 section "Tile Map Data", wram0
 
 ; buffer for temporarily saving and restoring current screen's tiles
