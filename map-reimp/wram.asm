@@ -91,6 +91,10 @@ wTileMapBackup::
 wTileMap::
     ds 20 * 18 ; width * height of screen
 
-wRedrawRowOrColumnSrcTiles:: ; cbfc
 ; the tiles of the row or column to be redrawn by RedrawRowOrColumn
+wRedrawRowOrColumnSrcTiles::
 	ds SCREEN_WIDTH * 2
+
+; the address of the upper left corner of the visible portion of the BG tile map in VRAM
+wMapViewVRAMPointer::
+	ds 2

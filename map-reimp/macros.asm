@@ -36,3 +36,20 @@ ENDM
 RGB: MACRO
     dw (\3 << 10 | \2 << 5 | \1)
 ENDM
+
+validateCoords: MACRO
+	IF \1 >= SCREEN_WIDTH
+		fail "x coord out of range"
+	ENDC
+	IF \2 >= SCREEN_HEIGHT
+		fail "y coord out of range"
+	ENDC
+ENDM
+
+;\1 = r
+;\2 = X
+;\3 = Y
+coord: MACRO
+	validateCoords \2, \3
+	ld \1, wTileMap + SCREEN_WIDTH * \3 + \2
+ENDM

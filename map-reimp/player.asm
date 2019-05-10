@@ -27,9 +27,7 @@ AdvancePlayer::
 .checkForWalkStart
     ld a, 7
     cp [hl] ; check if we're on the first iteration of AdvancePlayer
-    jr nz, .updateBackgroundScroll
-    
-.updateBackgroundScroll
+    call z, PrepareToDrawMapEdge
     ld a, [hSCY]
     sla b
     add b
@@ -38,6 +36,13 @@ AdvancePlayer::
     sla c
     add c
     ld [hSCX], a
+    ret
+
+PrepareToDrawMapEdge::
+    ld a, b
+    and a
+    jr z, .updateEastWestVRAMPointer
+.updateEastWestVRAMPointer
     ret
 
 ; read from Joypad and update player deltas if necessary

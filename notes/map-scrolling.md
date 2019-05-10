@@ -58,6 +58,7 @@ This is a oversimplified and possible inaccurate description.
 
 ### New variables
 
+* `[wMapViewVRAMPointer]` - Surprisingly, it would seem as though I don't have this variable yet. I was conflating it with `[wCurBlockMapViewPtr]`. The VRAM Pointer points to a memory address in VRAM (`$98xx`). Its destination in VRAM is the upper-left corner where `[wTileMap]` will be drawn.
 * `[hRedrawRowOrColumnMode]` - The current redraw mode used from the VBlank handler. Values are `REDRAW_COL`, `REDRAW_ROW`, or zero (don't redraw anything)
 * `[wRedrawRowOrColumnSrcTiles]` - A linear list of tiles to redraw in a row or column
 * `[hRedrawRowOrColumnDest]` - The starting location to redraw row or column tiles. This is generated from `[wMapViewVRAMPointer]`, and is equal to `[wMapViewVRAMPointer]` when redrawing the north or west side

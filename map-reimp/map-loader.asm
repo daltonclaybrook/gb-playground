@@ -5,6 +5,7 @@ section "Map Loader", rom0
 ; [wCurMap] is used as input
 LoadMap::
     call DisableLCD
+    call ResetMapViewVRAMPointer
     call ConfigureLCDForTileset
     call ConfigureBGPalette
     call LoadMapMetadata
@@ -15,6 +16,14 @@ LoadMap::
     call CopyMapTilesToScreenBuffer
     call CopyTilesToVRAM
     call EnableLCD
+    ret
+
+; We're loading a new map, so it will start drawing from `$9800` in VRAM
+ResetMapViewVRAMPointer::
+    ld a, $98
+    ld [wMapViewVRAMPointer + 1], a
+    xor a
+    ld [wMapViewVRAMPointer], a
     ret
 
 ; Sets the LCD controller to use the correct tileset address in VRAM
