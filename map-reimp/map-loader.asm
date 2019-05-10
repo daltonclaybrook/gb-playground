@@ -163,6 +163,7 @@ LoadMapTiles::
     jr nz, .rowLoop
     ret
 
+; This will probably need to be updated to account for `[wXBlockCoord]` and `[wYBlockCoord]`
 CopyMapTilesToScreenBuffer::
     ld hl, wTileMap
     ld de, wTileMapBackup

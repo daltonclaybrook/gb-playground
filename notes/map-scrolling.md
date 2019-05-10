@@ -56,6 +56,14 @@ This is a oversimplified and possible inaccurate description.
 * destination pointer is `[hRedrawRowOrColumnDest]`
 * loop and copy all tiles to VRAM
 
+### New variables
+
+* `[hRedrawRowOrColumnMode]` - The current redraw mode used from the VBlank handler. Values are `REDRAW_COL`, `REDRAW_ROW`, or zero (don't redraw anything)
+* `[wRedrawRowOrColumnSrcTiles]` - A linear list of tiles to redraw in a row or column
+* `[hRedrawRowOrColumnDest]` - The starting location to redraw row or column tiles. This is generated from `[wMapViewVRAMPointer]`, and is equal to `[wMapViewVRAMPointer]` when redrawing the north or west side
+* `[wYCoord]` and `[wXCoord]` - The player's position in player coordinate space. Since a player takes up 2x2 tiles, divide tile coordinate by 2 to get player coordinate.
+* `[wXBlockCoord]` and `[wYBlockCoord]` - The player's offset inside the current block. Can be 0 or 1.
+
 Notes:
 
 * Lot of bit math going on when the VRAM pointer is updated:
