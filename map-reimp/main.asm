@@ -58,8 +58,9 @@ Start::
 
 .gameLoop
     call DelayFrame
+    call DelayFrame
     call UpdateJoypadState
-    call AdvancePlayer
+    call UpdatePlayer
     jr .gameLoop
 
 include "common.asm"

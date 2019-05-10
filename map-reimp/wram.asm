@@ -58,12 +58,22 @@ wPlayerDeltaY::
 wPlayerDeltaX::
     ds 1
 
-; player's current Y coord
+; player's current Y coord in player coordinate space
+;
+; the player sprite is 2x2 tiles, so Player Y of 1 == Tile Y of 2
 wPlayerY::
     ds 1
 
 ; player's current X coord
 wPlayerX::
+    ds 1
+
+; player's Y location within the current block
+wPlayerBlockY::
+    ds 1
+
+; player's X location within the current block
+wPlayerBlockX::
     ds 1
 
 ; player walk counter
@@ -80,3 +90,7 @@ wTileMapBackup::
 
 wTileMap::
     ds 20 * 18 ; width * height of screen
+
+wRedrawRowOrColumnSrcTiles:: ; cbfc
+; the tiles of the row or column to be redrawn by RedrawRowOrColumn
+	ds SCREEN_WIDTH * 2

@@ -1,17 +1,20 @@
 section "Player", rom0
 
-; Advance the players position
-AdvancePlayer::
+UpdatePlayer::
     call UpdatePlayerDeltas
     ld a, [wPlayerDeltaY]
     ld b, a
     ld a, [wPlayerDeltaX]
     ld c, a
     or b
-    ret z ; return if deltas are zero; don't decrement counter or update screen scroll
+    call nz, AdvancePlayer ; advance player if deltas are not zero
+    ret
+
+; Advance the players position
+AdvancePlayer::
     ld hl, wWalkCounter
     dec [hl]
-    jr nz, .afterUpdateMapCoords
+    jr nz, .checkForWalkStart
     ld a, [wPlayerY]
     add b
     ld [wPlayerY], a
@@ -21,11 +24,18 @@ AdvancePlayer::
     xor a
     ld [wPlayerDeltaY], a
     ld [wPlayerDeltaX], a
-.afterUpdateMapCoords
+.checkForWalkStart
+    ld a, 7
+    cp [hl] ; check if we're on the first iteration of AdvancePlayer
+    jr nz, .updateBackgroundScroll
+    
+.updateBackgroundScroll
     ld a, [hSCY]
+    sla b
     add b
     ld [hSCY], a
     ld a, [hSCX]
+    sla c
     add c
     ld [hSCX], a
     ret
