@@ -40,7 +40,7 @@ Start::
     ld a, PALLET_TOWN_MAP_2
     ld [wCurMap], a
 
-    ld a, 4
+    ld a, $0b
     ld [wMapBackgroundBlockID], a
 
     ld hl, wCurBlockMap + $33 ; upper left of map without border
