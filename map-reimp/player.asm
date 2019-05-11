@@ -27,7 +27,9 @@ AdvancePlayer::
 .checkForWalkStart
     ld a, 7
     cp [hl] ; check if we're on the first iteration of AdvancePlayer
+    push bc
     call z, PrepareToDrawMapEdge
+    pop bc
     ld a, [hSCY]
     sla b
     add b
