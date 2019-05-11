@@ -57,7 +57,7 @@ RedrawRowOrColumn::
 	inc de
 	ld a, [hli]
 	ld [de], a
-	ld e, a
+	ld a, e
 	inc a
 	; these lines wrap to the left side of the screen if necessary
 	and $1f
