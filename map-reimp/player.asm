@@ -93,37 +93,39 @@ PrepareToDrawMapEdge::
     ld [wMapViewVRAMPointer], a
     jr .adjustYCoordWithinBlock
 .adjustYCoordWithinBlock::
-    ld a, [wYBlockCoord]
+    ld hl, wYBlockCoord
+    ld a, [hl]
     add b ; add delta y to block coord
-    ld [wYBlockCoord], a
+    ld [hl], a
     cp $02
     jr nz, .checkYBlockCoordUnderflow
     xor a
-    ld [wYBlockCoord], a
+    ld [hl], a
     call MoveTileBlockMapPointerSouth
     jr .updateMapView
 .checkYBlockCoordUnderflow::
     cp $ff
     jr nz, .adjustXCoordWithinBlock
     xor a
-    ld [wYBlockCoord], a
+    ld [hl], a
     call MoveTileBlockMapPointerNorth
     jr .updateMapView
 .adjustXCoordWithinBlock::
-    ld a, [wXBlockCoord]
+    ld hl, wXBlockCoord
+    ld a, [hl]
     add c, ; add delta x
-    ld [wXBlockCoord], a
+    ld [hl], a
     cp $02
     jr nz, .checkXBlockCoordUnderflow
     xor a
-    ld [wXBlockCoord], a
+    ld [hl], a
     call MoveTileBlockMapPointerEast
     jr .updateMapView
 .checkXBlockCoordUnderflow::
     cp $ff
     jr nz, .updateMapView
     xor a
-    ld [wXBlockCoord], a
+    ld [hl], a
     call MoveTileBlockMapPointerWest
     jr .updateMapView
 .updateMapView::
