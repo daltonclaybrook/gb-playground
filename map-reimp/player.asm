@@ -42,7 +42,7 @@ AdvancePlayer::
 
 PrepareToDrawMapEdge::
     ld a, b
-    cp -1 ; check moving north
+    cp $ff ; check moving north
     jr nz, .checkMovingSouth
     ld a, [wMapViewVRAMPointer]
     sub $40
@@ -108,7 +108,7 @@ PrepareToDrawMapEdge::
 .checkYBlockCoordUnderflow::
     cp $ff
     jr nz, .adjustXCoordWithinBlock
-    xor a
+    ld a, $01
     ld [hl], a
     call MoveTileBlockMapPointerNorth
     jr .updateMapView
