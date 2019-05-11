@@ -40,9 +40,62 @@ AdvancePlayer::
 
 PrepareToDrawMapEdge::
     ld a, b
-    and a
-    jr z, .updateEastWestVRAMPointer
-.updateEastWestVRAMPointer
+    cp -1 ; check moving north
+    jr nz, .checkMovingSouth
+    ld a, [wMapViewVRAMPointer]
+    sub $40
+    ld [wMapViewVRAMPointer], a
+    jr nc, .adjustYCoordWithinBlock
+    ld a, [wMapViewVRAMPointer + 1]
+    dec a
+    and $03 ; these two lines keep the high byte in the range of $98 - $9b
+    or $98
+    ld [wMapViewVRAMPointer + 1], a 
+    jr .adjustYCoordWithinBlock
+.checkMovingSouth::
+    cp 1
+    jr nz, .checkMovingEast
+    ld a, [wMapViewVRAMPointer]
+    add $40
+    ld [wMapViewVRAMPointer], a
+    jr nc, .adjustYCoordWithinBlock
+    ld a, [wMapViewVRAMPointer + 1]
+    inc a
+    and $03
+    or $98
+    ld [wMapViewVRAMPointer + 1], a
+    jr .adjustYCoordWithinBlock
+.checkMovingEast::
+    ld a, c
+    cp 1
+    jr nz, .checkMovingWest
+    ld a, [wMapViewVRAMPointer]
+    ld e, a
+    and $e0
+    ld d, a
+    ld a, e    
+    add $02
+    and $1f
+    or d
+    ld [wMapViewVRAMPointer], a
+    jr .adjustYCoordWithinBlock
+.checkMovingWest::
+    cp -1
+    jr nz, .finish
+    ld a, [wMapViewVRAMPointer]
+    ld e, a
+    and $e0
+    ld d, a
+    ld a, e
+    sub $02
+    and $1f
+    or d
+    ld [wMapViewVRAMPointer], a
+    jr .adjustYCoordWithinBlock
+.adjustYCoordWithinBlock::
+.adjustXCoordWithinBlock::
+
+.finish::
     ret
 
 ; read from Joypad and update player deltas if necessary
