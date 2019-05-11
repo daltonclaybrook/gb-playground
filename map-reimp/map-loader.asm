@@ -12,10 +12,16 @@ LoadMap::
     call LoadMapBlocks
     call LoadTilesetMetadata
     call LoadTilesetGFX
-    call LoadMapTiles
-    call CopyMapTilesToScreenBuffer
+    call LoadAndCopyMapTiles
     call CopyTilesToVRAM
     call EnableLCD
+    ret
+
+; convenience function for loading map tiles from a block map
+; then copying them to the screen buffer
+LoadAndCopyMapTiles::
+    call LoadMapTiles
+    call CopyMapTilesToScreenBuffer
     ret
 
 ; We're loading a new map, so it will start drawing from `$9800` in VRAM

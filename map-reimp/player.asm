@@ -129,7 +129,28 @@ PrepareToDrawMapEdge::
     call MoveTileBlockMapPointerWest
     jr .updateMapView
 .updateMapView::
-
+    call LoadAndCopyMapTiles
+    ld a, [wPlayerDeltaY]
+    ; check north redraw
+    cp $ff
+    jr nz, .checkSouthRedraw
+    call ScheduleNorthRowRedraw
+    jr .finish
+.checkSouthRedraw::
+    cp $01
+    jr nz, .checkEastRedraw
+    call ScheduleSouthRowRedraw
+    jr .finish
+.checkEastRedraw::
+    ld a, [wPlayerDeltaX]
+    cp $01
+    jr nz, .checkWestRedraw
+    call ScheduleEastColumnRedraw
+    jr .finish
+.checkWestRedraw::
+    cp $ff
+    jr nz, .finish
+    call ScheduleWestColumnRedraw
 .finish::
     ret
 
@@ -183,6 +204,88 @@ MoveTileBlockMapPointerWest::
     ld a, [de]
     dec a
     ld [de], a
+    ret
+
+ScheduleNorthRowRedraw::
+    coord de, 0, 0
+    ld hl, wRedrawRowOrColumnSrcTiles
+    ld bc, SCREEN_WIDTH * 2
+    call CopyData
+    ld a, [wMapViewVRAMPointer]
+    ld [hRedrawRowOrColumnDest], a
+    ld a, [wMapViewVRAMPointer + 1]
+    ld [hRedrawRowOrColumnDest + 1], a
+    ld a, REDRAW_ROW
+    ld [hRedrawRowOrColumnMode], a
+    ret
+
+ScheduleSouthRowRedraw::
+    coord de, 0, 16 ; copy bottom two rows (screen has 18 rows)
+    ld hl, wRedrawRowOrColumnSrcTiles
+    ld bc, SCREEN_WIDTH * 2
+    call CopyData
+    ld a, [wMapViewVRAMPointer]
+    ld l, a
+    ld a, [wMapViewVRAMPointer + 1]
+    ld h, a
+    ld bc, $200 ; 16 rows of 32 tiles
+    add hl, bc
+    ld a, h
+    and $03 ; keep the high byte in the range $98-$9b
+    or $98
+    ld [hRedrawRowOrColumnDest + 1], a
+    ld a, l
+    ld [hRedrawRowOrColumnDest], a
+    ld a, REDRAW_ROW
+    ld [hRedrawRowOrColumnMode], a
+    ret
+
+ScheduleEastColumnRedraw::
+    coord de, 18, 0
+    call ColumnRedrawHelper
+    ld a, [wMapViewVRAMPointer]
+    ld c, a
+    and $e0
+    ld b, a
+    ld a, c
+    add 18
+    and $1f
+    or b
+    ld [hRedrawRowOrColumnDest], a
+    ld a, [wMapViewVRAMPointer + 1]
+    ld [hRedrawRowOrColumnDest + 1], a
+    ld a, REDRAW_COL
+    ld [hRedrawRowOrColumnMode], a
+    ret
+
+ScheduleWestColumnRedraw::
+    coord de, 0, 0
+    call ColumnRedrawHelper
+    ld a, [wMapViewVRAMPointer]
+    ld [hRedrawRowOrColumnDest], a
+    ld a, [wMapViewVRAMPointer + 1]
+    ld [hRedrawRowOrColumnDest + 1], a
+    ld a, REDRAW_COL
+    ld [hRedrawRowOrColumnMode], a
+    ret
+
+ColumnRedrawHelper::
+    ld hl, wRedrawRowOrColumnSrcTiles
+    ld c, SCREEN_HEIGHT
+.loop::
+    ld a, [de]
+    ld [hli], a
+    inc de
+    ld a, [de]
+    ld [hli], a
+    ld a, d
+    add 19 ; 1 row minus 1 tile
+    ld d, a
+    jr nc, .noCarry
+    inc e
+.noCarry::
+    dec c
+    jr nz, .loop
     ret
 
 ; read from Joypad and update player deltas if necessary
