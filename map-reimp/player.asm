@@ -93,7 +93,7 @@ PrepareToDrawMapEdge::
     ld [wMapViewVRAMPointer], a
     jr .adjustYCoordWithinBlock
 .adjustYCoordWithinBlock::
-    ld hl, wYBlockCoord
+    ld hl, wPlayerBlockY
     ld a, [hl]
     add b ; add delta y to block coord
     ld [hl], a
@@ -111,9 +111,9 @@ PrepareToDrawMapEdge::
     call MoveTileBlockMapPointerNorth
     jr .updateMapView
 .adjustXCoordWithinBlock::
-    ld hl, wXBlockCoord
+    ld hl, wPlayerBlockX
     ld a, [hl]
-    add c, ; add delta x
+    add c ; add delta x
     ld [hl], a
     cp $02
     jr nz, .checkXBlockCoordUnderflow

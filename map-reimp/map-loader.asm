@@ -130,7 +130,11 @@ LoadTilesetGFX::
     call CopyData
     ret
 
-; Load tiles for the current map into WRAM by referencing the map blocks file and the blocket
+; Load tiles from the block map into WRAM
+;
+; This area of memory ([wTileMapBackup]) is 6x5 blocks
+; It uses [wCurBlockMapViewPtr] as a pointer to the upper left corner
+; IDs from the block map reference strings of 16 tiles in the blockset
 LoadMapTiles::
     ld a, [wCurBlockMapViewPtr]
     ld e, a
@@ -172,10 +176,28 @@ LoadMapTiles::
     jr nz, .rowLoop
     ret
 
-; This will probably need to be updated to account for `[wXBlockCoord]` and `[wYBlockCoord]`
+; Tiles are copied from [wTileMapBackup] to the screen buffer [wTileMap]
+;
+; While the backup is 24x20 tiles (6x5 blocks), the screen buffer is
+; 20x18 tiles, which is the size of the screen. This leaves room for
+; adjustment based on the values of [wPlayerBlockX] and [wPlayerBlockY]
 CopyMapTilesToScreenBuffer::
+    ld hl, wTileMapBackup
+    ld a, [wPlayerBlockY]
+    and a
+    jr z, .checkPlayerBlockX
+    ld bc, $30 ; 6 blocks * 4 tiles * 2 rows
+    add hl, bc
+.checkPlayerBlockX::
+    ld a, [wPlayerBlockX]
+    and a
+    jr z, .copyTiles
+    ld bc, $02 ; move pointer over two tiles
+    add hl, bc
+.copyTiles::
+    ld d, h
+    ld e, l
     ld hl, wTileMap
-    ld de, wTileMapBackup
     ld bc, SCREEN_HEIGHT
 .rowLoop
     push bc

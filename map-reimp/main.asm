@@ -49,6 +49,10 @@ Start::
     ld a, h
     ld [wCurBlockMapViewPtr + 1], a
 
+    ld a, 1
+    ld [wPlayerBlockY], a
+    ld [wPlayerBlockX], a
+
     call LoadMap
 
     ld a, IEF_VBLANK | IEF_TIMER | IEF_SERIAL
