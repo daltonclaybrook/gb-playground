@@ -126,7 +126,7 @@ PrepareToDrawMapEdge::
 .checkXBlockCoordUnderflow::
     cp $ff
     jr nz, .updateMapView
-    xor a
+    ld a, $01
     ld [hl], a
     call MoveTileBlockMapPointerWest
     jr .updateMapView
