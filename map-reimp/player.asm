@@ -280,11 +280,11 @@ ColumnRedrawHelper::
     inc de
     ld a, [de]
     ld [hli], a
-    ld a, d
-    add 19 ; 1 row minus 1 tile
-    ld d, a
+    ld a, 19 ; 1 row minus 1 tile
+    add e
+    ld e, a
     jr nc, .noCarry
-    inc e
+    inc d
 .noCarry::
     dec c
     jr nz, .loop
