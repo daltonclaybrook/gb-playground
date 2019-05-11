@@ -134,12 +134,55 @@ PrepareToDrawMapEdge::
     ret
 
 MoveTileBlockMapPointerNorth::
+    ld de, wCurBlockMapViewPtr
+    ld a, [wCurMapStride]
+    ld b, a
+    ld a, [de]
+    sub b
+    ld [de], a
+    ret nc
+    inc de
+    ld a, [de]
+    dec a
+    ld [de], a
     ret
+
 MoveTileBlockMapPointerSouth::
+    ld de, wCurBlockMapViewPtr
+    ld a, [wCurMapStride]
+    ld b, a
+    ld a, [de]
+    add b
+    ld [de], a
+    ret nc
+    inc de
+    ld a, [de]
+    inc a
+    ld [de], a
     ret
+
 MoveTileBlockMapPointerEast::
+    ld de, wCurBlockMapViewPtr
+    ld a, [de]
+    inc a
+    ld [de], a
+    ret nc
+    inc de
+    ld a, [de]
+    inc a
+    ld [de], a
     ret
+
 MoveTileBlockMapPointerWest::
+    ld de, wCurBlockMapViewPtr
+    ld a, [de]
+    dec a
+    ld [de], a
+    ret nc
+    inc de
+    ld a, [de]
+    dec a
+    ld [de], a
     ret
 
 ; read from Joypad and update player deltas if necessary
