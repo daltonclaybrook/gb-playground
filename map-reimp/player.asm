@@ -71,7 +71,7 @@ PrepareToDrawMapEdge::
     jr nz, .checkMovingWest
     ld a, [wMapViewVRAMPointer]
     ld e, a
-    and $e0
+    and $e0 ; the following lines make sure the add doesn't overflow past $1f in order to keep the pointer on the same row
     ld d, a
     ld a, e    
     add $02
@@ -93,9 +93,51 @@ PrepareToDrawMapEdge::
     ld [wMapViewVRAMPointer], a
     jr .adjustYCoordWithinBlock
 .adjustYCoordWithinBlock::
+    ld a, [wYBlockCoord]
+    add b ; add delta y to block coord
+    ld [wYBlockCoord], a
+    cp $02
+    jr nz, .checkYBlockCoordUnderflow
+    xor a
+    ld [wYBlockCoord], a
+    call MoveTileBlockMapPointerSouth
+    jr .updateMapView
+.checkYBlockCoordUnderflow::
+    cp $ff
+    jr nz, .adjustXCoordWithinBlock
+    xor a
+    ld [wYBlockCoord], a
+    call MoveTileBlockMapPointerNorth
+    jr .updateMapView
 .adjustXCoordWithinBlock::
+    ld a, [wXBlockCoord]
+    add c, ; add delta x
+    ld [wXBlockCoord], a
+    cp $02
+    jr nz, .checkXBlockCoordUnderflow
+    xor a
+    ld [wXBlockCoord], a
+    call MoveTileBlockMapPointerEast
+    jr .updateMapView
+.checkXBlockCoordUnderflow::
+    cp $ff
+    jr nz, .updateMapView
+    xor a
+    ld [wXBlockCoord], a
+    call MoveTileBlockMapPointerWest
+    jr .updateMapView
+.updateMapView::
 
 .finish::
+    ret
+
+MoveTileBlockMapPointerNorth::
+    ret
+MoveTileBlockMapPointerSouth::
+    ret
+MoveTileBlockMapPointerEast::
+    ret
+MoveTileBlockMapPointerWest::
     ret
 
 ; read from Joypad and update player deltas if necessary
