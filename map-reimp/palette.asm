@@ -71,6 +71,19 @@ ConfigureBGPalette::
     jr nz, .loop
     ret
 
+ConfigureSpritePalette::
+    ld a, %10000000 ; auto-increment starting at index 0
+    ld [rOCPS], a ; object palette specification
+    ld hl, MainBGPalette1
+    ld de, rOCPD
+    ld c, 8 ; 8 bytes in a color palette
+.loop
+    ld a, [hli]
+    ld [de], a
+    dec c
+    jr nz, .loop
+    ret
+
 ; Select a specific background palette
 ;
 ; d = index

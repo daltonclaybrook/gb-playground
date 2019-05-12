@@ -4,7 +4,6 @@ section "Map Loader", rom0
 ;
 ; [wCurMap] is used as input
 LoadMap::
-    call DisableLCD
     call ResetMapViewVRAMPointer
     call ConfigureLCDForTileset
     call ConfigureBGPalette
@@ -14,7 +13,6 @@ LoadMap::
     call LoadTilesetGFX
     call LoadAndCopyMapTiles
     call CopyTilesToVRAM
-    call EnableLCD
     ret
 
 ; convenience function for loading map tiles from a block map

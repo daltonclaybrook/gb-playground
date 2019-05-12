@@ -31,9 +31,12 @@ section "Game", rom0[$150]
 
 ; Game Start
 Start::
+    call DisableLCD
 	call PerformInitialSetup
     call SetupSampleMapValues
     call LoadMap
+    call LoadPlayerTileset
+    call EnableLCD
 
     ld a, IEF_VBLANK | IEF_TIMER | IEF_SERIAL
     ld [rIE], a
@@ -62,15 +65,16 @@ SetupSampleMapValues::
     ld a, $0b
     ld [wMapBackgroundBlockID], a
 
-    ld hl, wCurBlockMap + $33 ; upper left of map without border
+    ld hl, wCurBlockMap + $43 ; upper left of map without border
     ld a, l
     ld [wCurBlockMapViewPtr], a
     ld a, h
     ld [wCurBlockMapViewPtr + 1], a
 
     ld a, 1
-    ld [wPlayerBlockY], a
     ld [wPlayerBlockX], a
+    xor a
+    ld [wPlayerBlockY], a
     ret
 
 include "common.asm"
@@ -78,5 +82,6 @@ include "wram.asm"
 include "map-loader.asm"
 include "joypad.asm"
 include "vblank.asm"
+include "player.asm"
 include "player-movement.asm"
 include "oam-dma.asm"
