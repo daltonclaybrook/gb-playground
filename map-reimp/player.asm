@@ -26,7 +26,7 @@ DrawPlayer::
     call ConfigurePlayerSpriteParams
     call SetAllPlayerFlags
     ld e, c ; e is now the modifer
-    ld c, 64 + 8 ; y position
+    ld c, 60 + 16 ; y position
     ; draw upper half
     push bc
     call DrawTileToBuffer
