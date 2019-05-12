@@ -85,13 +85,28 @@ ConfigurePlayerSpriteParams::
     ld a, [wWalkCounter]
     and a
     jr z, .finish ; finish if frame zero
-    dec a
-    and $fc
-    jr nz, .finish ; finish if frame > 4
+    cp 5
+    jr nc, .finish ; finish if not frame 1-4
     ld a, 12 ; add 12 to tile number which is the offset of the walking version of this tile
     add d
     ld d, a
+    call FlipXForOddStepIfNecessary
 .finish
+    ret
+
+FlipXForOddStepIfNecessary::
+    ld a, [wPlayerOddStep]
+    and a
+    ret z
+    ld a, [wPlayerFacingDirection]
+    cp DIRECTION_NORTH
+    jr z, .flipX
+    cp DIRECTION_SOUTH
+    ret nz
+.flipX
+    set OAM_X_FLIP, e ; flip the x axis
+    ld b, 72 + 8 ; draw from right to left
+    ld c, -8
     ret
 
 ; Set all flags

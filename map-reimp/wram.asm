@@ -86,6 +86,12 @@ wWalkCounter::
 wPlayerFacingDirection::
     ds 1
 
+; Whether or not the player is on an odd step
+;
+; causes the animation to flip on the x axis if walking north or south
+wPlayerOddStep::
+    ds 1
+
 section "Tile Map Data", wram0
 
 ; buffer for temporarily saving and restoring current screen's tiles

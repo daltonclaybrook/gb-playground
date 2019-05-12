@@ -42,6 +42,7 @@ AdvancePlayer::
     ret
 
 PrepareToDrawMapEdge::
+    call TogglePlayerOddStep
     ld a, b
     cp $ff ; check moving north
     jr nz, .checkMovingSouth
@@ -163,6 +164,14 @@ PrepareToDrawMapEdge::
     jr nz, .finish
     call ScheduleWestColumnRedraw
 .finish::
+    ret
+
+; flip [wPlayerOddStep] between 0 and 1
+TogglePlayerOddStep::
+    ld a, [wPlayerOddStep]
+    cpl
+    and $01
+    ld [wPlayerOddStep], a
     ret
 
 MoveTileBlockMapPointerNorth::
