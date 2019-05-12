@@ -1,4 +1,4 @@
-section "Binaries", rom0
+section "Map Binaries", rom0
 
     const_def
     const OVERWORLD_TILESET ; $00
