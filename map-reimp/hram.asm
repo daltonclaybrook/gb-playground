@@ -19,3 +19,6 @@ hRedrawRowOrColumnMode EQU $FFD0
 
 ; the starting location to redraw column/row tiles. generated from `[wCurBlockMapViewPtr]`
 hRedrawRowOrColumnDest EQU $FFD1
+
+; Location where the DMA Transfer procedure will live
+hDMATransferProc EQU $FF80

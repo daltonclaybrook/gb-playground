@@ -98,3 +98,11 @@ wRedrawRowOrColumnSrcTiles::
 ; the address of the upper left corner of the visible portion of the BG tile map in VRAM
 wMapViewVRAMPointer::
 	ds 2
+
+section "OAM Buffer", wram0[$ca00]
+
+; buffer for OAM data. Copied to OAM by DMA
+;
+; It's important that this buffer start at a multiple of $100, which is why $ca00 is hard-coded
+wOAMBuffer:: ; $ca00
+	ds 4 * 40

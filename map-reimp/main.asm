@@ -31,12 +31,31 @@ section "Game", rom0[$150]
 
 ; Game Start
 Start::
-	xor a
+	call PerformInitialSetup
+    call SetupSampleMapValues
+    call LoadMap
+
+    ld a, IEF_VBLANK | IEF_TIMER | IEF_SERIAL
+    ld [rIE], a
+    ei
+
+.gameLoop
+    call DelayFrame
+    call DelayFrame
+    call UpdateJoypadState
+    call UpdatePlayer
+    jr .gameLoop
+
+PerformInitialSetup::
+    call WriteDMACodeToHRAM
+    xor a
 	ld [rIF], a
 	ld [rIE], a
     ld [hSCX], a
     ld [hSCY], a
+    ret
 
+SetupSampleMapValues::
     ld a, PALLET_TOWN_MAP_2
     ld [wCurMap], a
 
@@ -52,20 +71,7 @@ Start::
     ld a, 1
     ld [wPlayerBlockY], a
     ld [wPlayerBlockX], a
-
-    call LoadMap
-
-    ld a, IEF_VBLANK | IEF_TIMER | IEF_SERIAL
-    ld [rIE], a
-
-    ei
-
-.gameLoop
-    call DelayFrame
-    call DelayFrame
-    call UpdateJoypadState
-    call UpdatePlayer
-    jr .gameLoop
+    ret
 
 include "common.asm"
 include "wram.asm"
@@ -73,3 +79,4 @@ include "map-loader.asm"
 include "joypad.asm"
 include "vblank.asm"
 include "player.asm"
+include "oam-dma.asm"

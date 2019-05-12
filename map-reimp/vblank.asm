@@ -13,6 +13,7 @@ VBlank::
 
     call ReadJoypad
 	call RedrawRowOrColumn
+	call hDMATransferProc
 
     ld a, [H_VBLANKOCCURRED]
 	and a
