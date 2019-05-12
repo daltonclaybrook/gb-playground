@@ -112,14 +112,14 @@ LoadMapBlocks::
 LoadTilesetMetadata::
     ld a, [wCurMapTileset] ; get index of current tileset
     ld b, a
-    ld c, 4 ; multiply by 4, the size of the tileset header struct
+    ld c, 6 ; multiply by 6, the size of the tileset header struct
     call Multiply
     ld bc, TilesetHeaders
     add hl, bc
     ld d, h
     ld e, l
     ld hl, wCurTilesetBlocksPtr
-    ld bc, 4 ; load two pointers worth of data into WRAM
+    ld bc, 6 ; load three pointers worth of data into WRAM
     call CopyData
     ret
 

@@ -42,6 +42,10 @@ wCurTilesetBlocksPtr::
 wCurTilesetGfxPtr::
     ds 2
 
+; pointer to the tileset collision data
+wCurTilesetCollPtr::
+    ds 2
+
 ; an offset from [wCurBlockMap] to draw to the upper left corner of the screen
 ;
 ; [wCurBlockMapViewPtr] = y * [wCurMapStride] + x + [wCurBlockMap] 

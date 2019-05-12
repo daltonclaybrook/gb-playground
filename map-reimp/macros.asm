@@ -2,8 +2,9 @@
 ;
 ; - Param 1: Blockset address
 ; - Param 2: GFX address
+; - Param 3: Tile collision address
 tileset: MACRO
-    dw \1, \2 ; Blockset, GFX
+    dw \1, \2, \3 ; Blockset, GFX, Tilecoll
 ENDM
 
 ; Define a Block Map
