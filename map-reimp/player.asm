@@ -63,10 +63,12 @@ ConfigurePlayerSpriteParams::
     cp DIRECTION_NORTH
     jr nz, .checkSouth
     ld d, 4 ; tile number for north
+    jr .adjustForWalking
 .checkSouth
     cp DIRECTION_SOUTH
     jr nz, .checkEast
     ld d, 0 ; tile number for south
+    jr .adjustForWalking
 .checkEast
     cp DIRECTION_EAST
     jr nz, .checkWest
@@ -74,10 +76,21 @@ ConfigurePlayerSpriteParams::
     set OAM_X_FLIP, e ; flip the x axis
     ld b, 72 + 8
     ld c, -8
+    jr .adjustForWalking
 .checkWest
     cp DIRECTION_WEST
-    jr nz, .finish
+    jr nz, .adjustForWalking
     ld d, 8 ; tile number for west
+.adjustForWalking
+    ld a, [wWalkCounter]
+    and a
+    jr z, .finish ; finish if frame zero
+    dec a
+    and $fc
+    jr nz, .finish ; finish if frame > 4
+    ld a, 12 ; add 12 to tile number which is the offset of the walking version of this tile
+    add d
+    ld d, a
 .finish
     ret
 
