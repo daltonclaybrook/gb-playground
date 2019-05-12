@@ -80,6 +80,12 @@ wPlayerBlockX::
 wWalkCounter::
     ds 1
 
+; The direction the player is facing
+;
+; DIRECTION_SOUTH, DIRECTION_NORTH, DIRECTION_EAST, DIRECTION_WEST
+wPlayerFacingDirection::
+    ds 1
+
 section "Tile Map Data", wram0
 
 ; buffer for temporarily saving and restoring current screen's tiles

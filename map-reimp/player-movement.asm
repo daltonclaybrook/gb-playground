@@ -8,6 +8,7 @@ UpdatePlayer::
     ld c, a
     or b
     call nz, AdvancePlayer ; advance player if deltas are not zero
+    call DrawPlayer
     ret
 
 ; Advance the players position
@@ -44,6 +45,8 @@ PrepareToDrawMapEdge::
     ld a, b
     cp $ff ; check moving north
     jr nz, .checkMovingSouth
+    ld a, DIRECTION_NORTH
+    ld [wPlayerFacingDirection], a
     ld a, [wMapViewVRAMPointer]
     sub $40
     ld [wMapViewVRAMPointer], a
@@ -57,6 +60,8 @@ PrepareToDrawMapEdge::
 .checkMovingSouth::
     cp 1
     jr nz, .checkMovingEast
+    ld a, DIRECTION_SOUTH
+    ld [wPlayerFacingDirection], a
     ld a, [wMapViewVRAMPointer]
     add $40
     ld [wMapViewVRAMPointer], a
@@ -71,6 +76,8 @@ PrepareToDrawMapEdge::
     ld a, c
     cp 1
     jr nz, .checkMovingWest
+    ld a, DIRECTION_EAST
+    ld [wPlayerFacingDirection], a
     ld a, [wMapViewVRAMPointer]
     ld e, a
     and $e0 ; the following lines make sure the add doesn't overflow past $1f in order to keep the pointer on the same row
@@ -83,7 +90,9 @@ PrepareToDrawMapEdge::
     jr .adjustYCoordWithinBlock
 .checkMovingWest::
     cp -1
-    jr nz, .finish
+    jr nz, .updateMapView
+    ld a, DIRECTION_WEST
+    ld [wPlayerFacingDirection], a
     ld a, [wMapViewVRAMPointer]
     ld e, a
     and $e0
