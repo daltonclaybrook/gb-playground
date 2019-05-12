@@ -80,8 +80,8 @@ SetupSampleMapValues::
 ; Use the player's current position to set the block map
 ; pointer and block coordinates
 SetBlockMapViewPtrAndBlocCoords::
-    ld b, [wPlayerX]
-    ld c, [wPlayerY]
+    ; ld b, [wPlayerX]
+    ; ld c, [wPlayerY]
     ret
 
 include "common.asm"
