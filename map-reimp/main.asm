@@ -65,23 +65,43 @@ SetupSampleMapValues::
     ld a, $0b
     ld [wMapBackgroundBlockID], a
 
-    ld hl, wCurBlockMap + $43 ; upper left of map without border
-    ld a, l
-    ld [wCurBlockMapViewPtr], a
-    ld a, h
-    ld [wCurBlockMapViewPtr + 1], a
+    ld a, 5
+    ld [wPlayerX], a
+    ld a, 6
+    ld [wPlayerY], a
 
-    ld a, 1
-    ld [wPlayerBlockX], a
-    xor a
-    ld [wPlayerBlockY], a
+    call SetBlockMapViewPtrAndBlockCoords
     ret
 
 ; Use the player's current position to set the block map
 ; pointer and block coordinates
-SetBlockMapViewPtrAndBlocCoords::
-    ; ld b, [wPlayerX]
-    ; ld c, [wPlayerY]
+SetBlockMapViewPtrAndBlockCoords::
+    ld a, [wPlayerY]
+    ld d, a
+    and $01 ; only preserve low bit
+    ld [wPlayerBlockY], a
+    ld a, d
+    srl a
+    add MAP_BORDER - 2 ; 2 is magic number to get y value right
+    swap a ; high nibble is y
+    ld b, a
+    ld a, [wPlayerX]
+    ld d, a
+    and $01
+    ld [wPlayerBlockX], a
+    ld a, d
+    srl a
+    add MAP_BORDER - 2 ; 2 is magic number to get x value right
+    or b ; combine with high nibble
+
+    ld c, a
+    ld b, 0
+    ld hl, wCurBlockMap
+    add hl, bc
+    ld a, l
+    ld [wCurBlockMapViewPtr], a
+    ld a, h
+    ld [wCurBlockMapViewPtr + 1], a
     ret
 
 include "common.asm"
