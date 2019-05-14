@@ -49,6 +49,7 @@ CopyData::
 ; c = factor 2
 ; hl = result
 Multiply::
+	push de
     ld hl, 0
     ld d, 0
     ld e, b
@@ -60,4 +61,5 @@ Multiply::
     dec c
     jr nz, .loop
 .finish
+	pop de
     ret

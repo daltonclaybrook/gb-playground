@@ -65,7 +65,7 @@ SetupSampleMapValues::
     ld a, $0b
     ld [wMapBackgroundBlockID], a
 
-    ld a, 5
+    ld a, 3
     ld [wPlayerX], a
     ld a, 6
     ld [wPlayerY], a
