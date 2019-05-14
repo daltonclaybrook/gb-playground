@@ -102,9 +102,9 @@ UpdatePlayerColliding::
     add hl, de ; hl == ptr to tile that we're walking towards
     ld a, [hl] 
     ld d, a ; d == tile that we're walking towards
-    ld a, [wTilesetCollisionPtr]
+    ld a, [wCurTilesetCollPtr]
     ld l, a
-    ld a, [wTilesetCollisionPtr + 1]
+    ld a, [wCurTilesetCollPtr + 1]
     ld h, a ; hl = start of collision data
     pop bc ; return bc to origin delta x and y
 .loop
