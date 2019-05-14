@@ -13,33 +13,60 @@ UpdatePlayer::
 
 ; Advance the players position
 AdvancePlayer::
-    call UpdatePlayerColliding
     ld hl, wWalkCounter
     dec [hl]
-    jr nz, .checkForWalkStart
+    ld a, 7
+    cp [hl] ; check if we're on the first iteration of AdvancePlayer 
+    push bc
+    push hl
+    call z, StartMovingPlayer
+    pop hl
+    pop bc
+    call UpdatePlayerCoordAndScrollIfNecessary
+    ret
+
+; update player position and screen scroll values
+;
+; only update if not colliding
+; b = y delta
+; c = y delta
+UpdatePlayerCoordAndScrollIfNecessary::
+    ld a, [wPlayerIsColliding]
+    and a
+    jr nz, .zeroOutVariablesWithCheck
+
+    ld a, [hSCY]
+    ld d, b
+    ld e, c
+    sla d
+    add d
+    ld [hSCY], a
+    ld a, [hSCX]
+    sla e
+    add e
+    ld [hSCX], a
+
+.updateCoordsOnZeroFrame
+    ld a, 0
+    cp [hl] ; check if we're on the first iteration
+    ret nz
+
     ld a, [wPlayerY]
     add b
     ld [wPlayerY], a
     ld a, [wPlayerX]
     add c
     ld [wPlayerX], a
+    jr .zeroOutVariables
+.zeroOutVariablesWithCheck
+    ld a, 0
+    cp [hl] ; check if we're on the first iteration
+    ret nz
+.zeroOutVariables
     xor a
     ld [wPlayerDeltaY], a
     ld [wPlayerDeltaX], a
-.checkForWalkStart
-    ld a, 7
-    cp [hl] ; check if we're on the first iteration of AdvancePlayer
-    push bc
-    call z, PrepareToDrawMapEdge
-    pop bc
-    ld a, [hSCY]
-    sla b
-    add b
-    ld [hSCY], a
-    ld a, [hSCX]
-    sla c
-    add c
-    ld [hSCX], a
+    ld [wPlayerIsColliding], a
     ret
 
 ; Update the collision state variable
@@ -131,13 +158,59 @@ UpdatePlayerColliding::
     ld [wPlayerIsColliding], a
     ret
 
-PrepareToDrawMapEdge::
+; Called on the first frame of walk animation
+;
+; - update collision variable
+; - toggle odd step
+; - set movement direction
+; - advance if not colliding
+StartMovingPlayer::
+    call UpdatePlayerColliding
     call TogglePlayerOddStep
+    ld a, [wPlayerIsColliding]
+    ld d, a ; d == is colliding
     ld a, b
     cp $ff ; check moving north
     jr nz, .checkMovingSouth
     ld a, DIRECTION_NORTH
     ld [wPlayerFacingDirection], a
+    xor a
+    cp a, d
+    call z, MovePlayer.north
+    jr .finish
+.checkMovingSouth::
+    cp 1
+    jr nz, .checkMovingEast
+    ld a, DIRECTION_SOUTH
+    ld [wPlayerFacingDirection], a
+    xor a
+    cp a, d
+    call z, MovePlayer.south
+    jr .finish
+.checkMovingEast::
+    ld a, c
+    cp 1
+    jr nz, .checkMovingWest
+    ld a, DIRECTION_EAST
+    ld [wPlayerFacingDirection], a
+    xor a
+    cp a, d
+    call z, MovePlayer.east
+    jr .finish
+.checkMovingWest::
+    cp -1
+    jr nz, .finish
+    ld a, DIRECTION_WEST
+    ld [wPlayerFacingDirection], a
+    xor a
+    cp a, d
+    call z, MovePlayer.west
+    jr .finish
+.finish
+    ret
+
+MovePlayer::
+.north
     ld a, [wMapViewVRAMPointer]
     sub $40
     ld [wMapViewVRAMPointer], a
@@ -148,11 +221,7 @@ PrepareToDrawMapEdge::
     or $98
     ld [wMapViewVRAMPointer + 1], a 
     jr .adjustYCoordWithinBlock
-.checkMovingSouth::
-    cp 1
-    jr nz, .checkMovingEast
-    ld a, DIRECTION_SOUTH
-    ld [wPlayerFacingDirection], a
+.south
     ld a, [wMapViewVRAMPointer]
     add $40
     ld [wMapViewVRAMPointer], a
@@ -163,12 +232,7 @@ PrepareToDrawMapEdge::
     or $98
     ld [wMapViewVRAMPointer + 1], a
     jr .adjustYCoordWithinBlock
-.checkMovingEast::
-    ld a, c
-    cp 1
-    jr nz, .checkMovingWest
-    ld a, DIRECTION_EAST
-    ld [wPlayerFacingDirection], a
+.east
     ld a, [wMapViewVRAMPointer]
     ld e, a
     and $e0 ; the following lines make sure the add doesn't overflow past $1f in order to keep the pointer on the same row
@@ -179,11 +243,7 @@ PrepareToDrawMapEdge::
     or d
     ld [wMapViewVRAMPointer], a
     jr .adjustYCoordWithinBlock
-.checkMovingWest::
-    cp -1
-    jr nz, .updateMapView
-    ld a, DIRECTION_WEST
-    ld [wPlayerFacingDirection], a
+.west
     ld a, [wMapViewVRAMPointer]
     ld e, a
     and $e0
