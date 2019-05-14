@@ -81,15 +81,11 @@ UpdatePlayerColliding::
     ld a, [wCurMapStride]
     ld c, a ; factor 2 = map stride
     call Multiply ; hl = y * map stride
-    jr .breakpoint0
-.breakpoint0
     ld d, 0
     add hl, de ; add x to hl. hl == ptr offset in block map
     ld bc, wCurBlockMap
     add hl, bc ; hl == ptr to block
     ld a, [hl] ; a = block ID
-    jr .breakpoint1
-.breakpoint1
     swap a
     ld l, a
     and $0f
@@ -97,28 +93,20 @@ UpdatePlayerColliding::
     ld a, l
     and $f0
     ld l, a ; hl == block ID * $10
-    jr .breakpoint2
-.breakpoint2
     pop de ; originally pushed de, which contains the adjusted block y & x values
     sla d
     sla d
     sla d ; `sla d` 3 times to multiply y by 8
     ld b, 0
     ld c, d
-    jr .breakpoint3
-.breakpoint3
     add hl, bc ; hl is now offset by block y
     sla e ; `sla e` 1 time to multiply x by 2
     ld c, e
     add hl, bc ; hl is now offset by block x and y
-    jr .breakpoint4
-.breakpoint4
     ld a, [wCurTilesetBlocksPtr]
     ld e, a
     ld a, [wCurTilesetBlocksPtr + 1]
     ld d, a
-    jr .breakpoint5
-.breakpoint5
     add hl, de ; hl == ptr to tile that we're walking towards
     ld a, [hl] 
     ld d, a ; d == tile that we're walking towards
