@@ -13,6 +13,7 @@ UpdatePlayer::
 
 ; Advance the players position
 AdvancePlayer::
+    call UpdatePlayerColliding
     ld hl, wWalkCounter
     dec [hl]
     jr nz, .checkForWalkStart
@@ -39,6 +40,87 @@ AdvancePlayer::
     sla c
     add c
     ld [hSCX], a
+    ret
+
+; Update the collision state variable
+;
+; b = delta y
+; c = delta x
+;
+; Proc:
+; - get x & y of block the player is moving to (add delta, then divide by 2)
+; - get ptr offset in block map file (y * [wCurMapWidth] + x)
+; - get block ID at ptr offset
+; - create pointer to block id in block set file (multiply by $10)
+; - offset pointer by [wPlayerBlockY] (ptr + y * 8) and [wPlayerBlockX] (ptr + x * 4)
+; - get tile number at pointer
+; - search through collision file for tile number
+; - if tile number is not found, a collision occurrs
+UpdatePlayerColliding::
+    push bc
+    ld a, [wPlayerY]
+    add b
+    srl a ; divide by 2
+    add MAP_BORDER
+    ld d, a
+    ld a, [wPlayerX]
+    add c
+    srl a ; divide by 2
+    add MAP_BORDER
+    ld e, a ; d & e are y & x of the block in the block map + border
+    ld b, d ; factor 1 = y
+    ld a, [wCurMapStride]
+    ld c, a ; factor 2 = map stride
+    call Multiply
+    ld d, 0
+    add hl, de ; add x to hl. hl == ptr offset in block map
+    ld bc, wCurBlockMap
+    add hl, bc ; hl == ptr to block
+    ld a, [hl] ; a = block ID
+    swap a
+    ld l, a
+    and $0f
+    ld h, a
+    ld a, l
+    and $f0
+    ld l, a ; hl == block ID * $10
+    ld a, [wPlayerBlockY]
+    sla a
+    sla a
+    sla a ; `sla a` 3 times to multiply by 8
+    ld e, a
+    add hl, de ; hl is now offset by block y
+    ld a, [wPlayerBlockX]
+    sla a
+    sla a ; `sla a` 2 times to multiply by 4
+    ld e, a
+    add hl, de ; hl is now offset by block x and y
+    ld a, [wCurTilesetBlocksPtr]
+    ld e, a
+    ld a, [wCurTilesetBlocksPtr + 1]
+    ld d, a
+    add hl, de ; hl == ptr to tile that we're walking towards
+    ld a, [hl] 
+    ld d, a ; d == tile that we're walking towards
+    ld a, [wTilesetCollisionPtr]
+    ld l, a
+    ld a, [wTilesetCollisionPtr + 1]
+    ld h, a ; hl = start of collision data
+    pop bc ; return bc to origin delta x and y
+.loop
+    ld a, [hli]
+    cp a, d ; check if collision tile equals the one we're walking towards (d)
+    jr z, .passable
+    cp a, $ff
+    jr z, .collision
+    jr .loop
+.passable
+    xor a
+    ld [wPlayerIsColliding], a
+    ret
+.collision
+    ld a, 1
+    ld [wPlayerIsColliding], a
     ret
 
 PrepareToDrawMapEdge::

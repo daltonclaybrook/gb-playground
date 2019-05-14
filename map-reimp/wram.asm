@@ -17,7 +17,7 @@ wCurMapWidth::
     ds 1
 
 ; memory address of block map file
-wCurMapBlockDataPtr::
+wCurBlockMapPtr::
     ds 2
 
 ; block ID used to fill the border of the map
@@ -34,7 +34,7 @@ wCurBlockMap::
 wCurMapStride::
     ds 1
 
-; pointer to the tileset blocks data
+; pointer to the block set data
 wCurTilesetBlocksPtr::
     ds 2
 
@@ -60,6 +60,12 @@ wPlayerDeltaY::
 
 ; player's current X movement direction
 wPlayerDeltaX::
+    ds 1
+
+; Whether or not the player is colliding.
+;
+; 1 = colliding, 0 = not
+wPlayerIsColliding::
     ds 1
 
 ; player's current Y coord in player coordinate space

@@ -3,6 +3,7 @@ section "Map Loader", rom0
 ; Loads and displays the current map
 ;
 ; [wCurMap] is used as input
+; Function assumes the display has already been disabled
 LoadMap::
     call ResetMapViewVRAMPointer
     call ConfigureLCDForTileset
@@ -79,9 +80,9 @@ LoadMapBlocks::
     jr nz, .topBorderLoop
     ld e, MAP_BORDER
     add hl, de ; hl is now at the upper left portion of the map accounting for borders
-    ld a, [wCurMapBlockDataPtr]
+    ld a, [wCurBlockMapPtr]
     ld e, a
-    ld a, [wCurMapBlockDataPtr + 1]
+    ld a, [wCurBlockMapPtr + 1]
     ld d, a ; de = pointer to map block data
     ld a, [wCurMapHeight]
     ld c, a ; c = counter for map height
