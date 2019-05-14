@@ -108,8 +108,7 @@ UpdatePlayerColliding::
     jr .breakpoint3
 .breakpoint3
     add hl, bc ; hl is now offset by block y
-    sla e
-    sla e ; `sla e` 2 times to multiply x by 4
+    sla e ; `sla e` 1 time to multiply x by 2
     ld c, e
     add hl, bc ; hl is now offset by block x and y
     jr .breakpoint4
