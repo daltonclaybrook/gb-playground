@@ -19,39 +19,52 @@ MainBGPalette3::
     RGB 0, 0, 0
 
 EveryBGPalette::
+    RGB 31, 31, 31
+	RGB 28, 26, 9
+	RGB 28, 12, 11
+	RGB 9, 6, 8
+
 	RGB 31, 31, 31
     RGB 29, 26, 14
     RGB 11, 21, 20
     RGB 27, 12, 9
-	RGB 26, 14, 3
-	RGB 23, 9, 28
-	RGB 24, 3, 9
-	RGB 15, 5, 5
-	RGB 4, 18, 22
+	
+    RGB 4, 18, 22
 	RGB 22, 7, 28
 	RGB 8, 15, 4
 	RGB 24, 20, 24
-	RGB 19, 18, 25
+	
+    RGB 19, 18, 25
 	RGB 1, 10, 26
 	RGB 29, 4, 25
 	RGB 29, 13, 21
-	RGB 16, 26, 17
+	
+    RGB 16, 26, 17
 	RGB 23, 9, 10
 	RGB 21, 22, 11
 	RGB 28, 12, 11
-	RGB 9, 6, 8
+	
+    RGB 9, 6, 8
 	RGB 0, 21, 26
 	RGB 28, 26, 9
 	RGB 13, 29, 17
-	RGB 10, 7, 15
+	
+    RGB 10, 7, 15
 	RGB 26, 27, 4
 	RGB 28, 31, 19
 	RGB 8, 9, 1
-	RGB 4, 20, 5
+	
+    RGB 4, 20, 5
 	RGB 19, 0, 20
 	RGB 0, 3, 12
 	RGB 23, 23, 18
 EveryBGPaletteEnd::
+
+PlayerPalette::
+    RGB 31, 31, 31
+    RGB 28, 23, 23
+    RGB 23, 6, 9
+    RGB 6, 5, 7
 
 ConfigureBGPalette::
     ; call SelectRandomBGPalettes
@@ -74,7 +87,7 @@ ConfigureBGPalette::
 ConfigureSpritePalette::
     ld a, %10000000 ; auto-increment starting at index 0
     ld [rOCPS], a ; object palette specification
-    ld hl, MainBGPalette1
+    ld hl, PlayerPalette
     ld de, rOCPD
     ld c, 8 ; 8 bytes in a color palette
 .loop
