@@ -10,12 +10,12 @@ ENDM
 ; Define a Block Map
 ;
 ; - Param 1: Tileset index
-; - Param 2: Height in blocks
-; - Param 3: Width in blocks
+; - Param 2: Width in blocks
+; - Param 3: Height in blocks
 ; - Param 4: Block map address
 map: MACRO
     db \1 ; Tileset index
-    db \2, \3 ; Height and Width of blocks in map
+    db \2, \3 ; Width and Height of blocks in map
     dw \4 ; Block Map
 ENDM
 

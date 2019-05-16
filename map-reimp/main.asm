@@ -59,49 +59,18 @@ PerformInitialSetup::
     ret
 
 SetupSampleMapValues::
-    ld a, PALLET_TOWN_MAP_2
+    ld a, SAFFRON_CITY_MAP
+    ; ld a, PALLET_TOWN_MAP_2
     ld [wCurMap], a
 
-    ld a, $0b
+    ; ld a, $0b
+    ld a, $f
     ld [wMapBackgroundBlockID], a
 
-    ld a, 3
+    ld a, 34
     ld [wPlayerX], a
-    ld a, 6
+    ld a, 4
     ld [wPlayerY], a
-
-    call SetBlockMapViewPtrAndBlockCoords
-    ret
-
-; Use the player's current position to set the block map
-; pointer and block coordinates
-SetBlockMapViewPtrAndBlockCoords::
-    ld a, [wPlayerY]
-    ld d, a
-    and $01 ; only preserve low bit
-    ld [wPlayerBlockY], a
-    ld a, d
-    srl a
-    add MAP_BORDER - 2 ; 2 is magic number to get y value right
-    swap a ; high nibble is y
-    ld b, a
-    ld a, [wPlayerX]
-    ld d, a
-    and $01
-    ld [wPlayerBlockX], a
-    ld a, d
-    srl a
-    add MAP_BORDER - 2 ; 2 is magic number to get x value right
-    or b ; combine with high nibble
-
-    ld c, a
-    ld b, 0
-    ld hl, wCurBlockMap
-    add hl, bc
-    ld a, l
-    ld [wCurBlockMapViewPtr], a
-    ld a, h
-    ld [wCurBlockMapViewPtr + 1], a
     ret
 
 include "common.asm"

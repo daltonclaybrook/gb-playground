@@ -12,8 +12,41 @@ LoadMap::
     call LoadMapBlocks
     call LoadTilesetMetadata
     call LoadTilesetGFX
+    call ConfigureBlockMapViewPtrFromPlayerCoords
     call LoadAndCopyMapTiles
     call CopyTilesToVRAM
+    ret
+
+ConfigureBlockMapViewPtrFromPlayerCoords::
+    ld a, [wPlayerY]
+    ld d, a
+    and $01 ; only preserve low bit
+    ld [wPlayerBlockY], a
+    ld a, d
+    srl a
+    add MAP_BORDER - 2 ; 2 is magic number to get y value right
+    ld b, a
+    ld a, [wCurMapStride]
+    ld c, a
+    call Multiply ; hl == y * map stride
+
+    ld a, [wPlayerX]
+    ld d, a
+    and $01
+    ld [wPlayerBlockX], a
+    ld a, d
+    srl a
+    add MAP_BORDER - 2 ; 2 is magic number to get x value right
+    ld b, 0
+    ld c, a
+    add hl, bc ; combine x with y
+
+    ld bc, wCurBlockMap
+    add hl, bc
+    ld a, l
+    ld [wCurBlockMapViewPtr], a
+    ld a, h
+    ld [wCurBlockMapViewPtr + 1], a
     ret
 
 ; convenience function for loading map tiles from a block map
