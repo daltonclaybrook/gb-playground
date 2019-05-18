@@ -58,6 +58,16 @@ wCurTilesetCollPtr::
 wCurBlockMapViewPtr::
     ds 2
 
+; count of warps in the current map
+wCurMapWarpCount::
+    ds 1
+
+; location where warp data is stored for the current map
+;
+; includes source x/y, destination map id, and destination x/y
+wCurMapWarpData::
+    ds 128
+
 section "Player Data", wram0
 
 ; player's current Y movement direction
@@ -72,6 +82,12 @@ wPlayerDeltaX::
 ;
 ; 1 = colliding, 0 = not
 wPlayerIsColliding::
+    ds 1
+
+; Index of warp in current map that the player will warp to
+;
+; -1 if player is not warping
+wPlayerIsWarpingIndex::
     ds 1
 
 ; player's current Y coord in player coordinate space

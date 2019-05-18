@@ -9,6 +9,7 @@ LoadMap::
     call ConfigureLCDForTileset
     call ConfigureBGPalette
     call LoadMapMetadata
+    call LoadWarpData
     call LoadMapBlocks
     call LoadTilesetMetadata
     call LoadTilesetGFX
@@ -83,6 +84,23 @@ LoadMapMetadata::
     ld e, l
     ld hl, wCurMapTileset
     ld bc, $07 ; load all 7 bytes of the map header
+    call CopyData
+    ret
+
+; Load map warp data into WRAM
+LoadWarpData::
+    ld a, [wCurWarpMapPtr]
+    ld e, a
+    ld a, [wCurWarpMapPtr + 1]
+    ld d, a
+    ld a, [de] ; a = count of warps
+    ld b, a
+    ld c, $05 ; 5 bytes per warp
+    call Multiply
+    inc hl ; hl = count of bytes to transfer. add 1 for the warp count
+    ld b, h
+    ld c, l ; bc = count of bytes to transfer
+    ld hl, wCurMapWarpCount
     call CopyData
     ret
 

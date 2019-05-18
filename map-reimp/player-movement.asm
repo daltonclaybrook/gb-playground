@@ -158,6 +158,62 @@ UpdatePlayerColliding::
     ld [wPlayerIsColliding], a
     ret
 
+; check if the player is about to warp
+;
+; - get x and y of position player is moving to
+; - search warp data for a warp at this position
+; - set [wPlayerIsWarpingIndex] to the warp index, or -1 if not warping
+; - unset [wPlayerIsColliding] if player is warping
+UpdatePlayerIsWarping::
+    ld a, [wPlayerX]
+    ld b, a
+    ld a, [wPlayerDeltaX]
+    add b 
+    ld b, a ; b = x player is moving to
+    ld a, [wPlayerY]
+    ld c, a
+    ld a, [wPlayerY]
+    ld c, a
+    ld a, [wPlayerDeltaY]
+    add c
+    ld c, a ; b & c == x & y player is moving to
+    ld a, [wCurMapWarpCount]
+    ld d, a ; d = count of warps
+    ld e, 0 ; current index to check
+    ld hl, wCurMapWarpData
+.loop
+    ld a, [hli] ; a = x of warp point
+    cp b
+    jr nz, .xNotEqual
+    ld a, [hli] ; a = y of warp point
+    cp c
+    jr nz, .yNotEqual
+    jr .locationMatchesWarp
+.xNotEqual
+    ld a, 4 ; move to the next index
+    jr .moveToNextIndex
+.yNotEqual
+    ld a, 3 ; move to the next index
+    jr .moveToNextIndex
+.moveToNextIndex
+    add l
+    ld l, a
+    jr nc, .noCarry
+    inc h
+.noCarry
+    inc e ; next index
+    dec d ; decrement counter
+    jr nz, .loop
+    ld a, -1 ; player is not warping.
+    ld [wPlayerIsWarpingIndex], a
+    ret
+.locationMatchesWarp
+    ld a, e ; index to warp to
+    ld [wPlayerIsWarpingIndex], a
+    xor a
+    ld [wPlayerIsColliding], a
+    ret
+
 ; Called on the first frame of walk animation
 ;
 ; - update collision variable
@@ -166,6 +222,7 @@ UpdatePlayerColliding::
 ; - advance if not colliding
 StartMovingPlayer::
     call UpdatePlayerColliding
+    call UpdatePlayerIsWarping
     call TogglePlayerOddStep
     ld a, [wPlayerIsColliding]
     ld d, a ; d == is colliding
