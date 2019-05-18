@@ -160,33 +160,30 @@ UpdatePlayerColliding::
 
 ; check if the player is about to warp
 ;
+; bc = delta y & x. They should not be altered when this function returns
+;
 ; - get x and y of position player is moving to
 ; - search warp data for a warp at this position
 ; - set [wPlayerIsWarpingIndex] to the warp index, or -1 if not warping
 ; - unset [wPlayerIsColliding] if player is warping
 UpdatePlayerIsWarping::
+    push bc
     ld a, [wPlayerX]
-    ld b, a
-    ld a, [wPlayerDeltaX]
-    add b 
-    ld b, a ; b = x player is moving to
+    add c ; add delta x
+    ld c, a ; c = moving to x
     ld a, [wPlayerY]
-    ld c, a
-    ld a, [wPlayerY]
-    ld c, a
-    ld a, [wPlayerDeltaY]
-    add c
-    ld c, a ; b & c == x & y player is moving to
+    add b
+    ld b, a ; b = moving to y
     ld a, [wCurMapWarpCount]
     ld d, a ; d = count of warps
     ld e, 0 ; current index to check
     ld hl, wCurMapWarpData
 .loop
     ld a, [hli] ; a = x of warp point
-    cp b
+    cp c
     jr nz, .xNotEqual
     ld a, [hli] ; a = y of warp point
-    cp c
+    cp b
     jr nz, .yNotEqual
     jr .locationMatchesWarp
 .xNotEqual
@@ -206,12 +203,14 @@ UpdatePlayerIsWarping::
     jr nz, .loop
     ld a, -1 ; player is not warping.
     ld [wPlayerIsWarpingIndex], a
+    pop bc
     ret
 .locationMatchesWarp
     ld a, e ; index to warp to
     ld [wPlayerIsWarpingIndex], a
     xor a
     ld [wPlayerIsColliding], a
+    pop bc
     ret
 
 ; Called on the first frame of walk animation
