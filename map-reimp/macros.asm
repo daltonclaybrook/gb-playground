@@ -13,10 +13,12 @@ ENDM
 ; - Param 2: Width in blocks
 ; - Param 3: Height in blocks
 ; - Param 4: Block map address
+; - Param 5: Warp map address
 map: MACRO
     db \1 ; Tileset index
     db \2, \3 ; Width and Height of blocks in map
     dw \4 ; Block Map
+	dw \5 ; Warp Map
 ENDM
 
 ; Start defining constants
@@ -53,4 +55,15 @@ ENDM
 coord: MACRO
 	validateCoords \2, \3
 	ld \1, wTileMap + SCREEN_WIDTH * \3 + \2
+ENDM
+
+; define a warp point on a map
+;
+;\1 = source x
+;\2 = source y
+;\3 = destination map ID
+;\4 = destination x
+;\5 = destination y
+warp: MACRO
+	db \1, \2, \3, \4, \5
 ENDM

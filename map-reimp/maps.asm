@@ -15,10 +15,10 @@ TilesetHeaders::
     tileset OverworldBlocks, OverworldGFX, OverworldColl
 
 MapHeaders::
-    map OVERWORLD_TILESET, 9, 10, PalletTownBlockMap
-    map OVERWORLD_TILESET_2, 9, 10, PalletTownBlockMap
-    map OVERWORLD_TILESET, 18, 20, SaffronCityBlockMap
-    map OVERWORLD_TILESET, 9, 10, CinnabarIslandBlockMap
+    map OVERWORLD_TILESET, 10, 9, PalletTownBlockMap, PalletTownWarps
+    map OVERWORLD_TILESET_2, 10, 9, PalletTownBlockMap, PalletTownWarps
+    map OVERWORLD_TILESET, 20, 18, SaffronCityBlockMap, PalletTownWarps
+    map OVERWORLD_TILESET, 10, 9, CinnabarIslandBlockMap, PalletTownWarps
 
 OverworldBlocks::
     incbin "assets/overworld.bst"

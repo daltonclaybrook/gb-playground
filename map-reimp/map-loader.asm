@@ -75,14 +75,14 @@ ConfigureLCDForTileset::
 LoadMapMetadata::
     ld a, [wCurMap]
     ld b, a
-    ld c, 5 ; multiply index by 5 bytes, which is the size of the map header struct
+    ld c, 7 ; multiply index by 7 bytes, which is the size of the map header struct
     call Multiply
     ld bc, MapHeaders
     add hl, bc
     ld d, h
     ld e, l
     ld hl, wCurMapTileset
-    ld bc, $05 ; load all 5 bytes of the map header
+    ld bc, $07 ; load all 7 bytes of the map header
     call CopyData
     ret
 

@@ -26,6 +26,7 @@ EntryPoint::
 ; Maybe constants need to be declared above where they're used?
 include "macros.asm"
 include "maps.asm"
+include "warps.asm"
 
 section "Game", rom0[$150]
 

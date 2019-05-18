@@ -8,16 +8,22 @@ wCurMap::
 wCurMapTileset::
     ds 1
 
-; height of the current map in blocks
-wCurMapHeight::
-    ds 1
-
 ; width of the current map in blocks
 wCurMapWidth::
     ds 1
 
+; height of the current map in blocks
+wCurMapHeight::
+    ds 1
+
 ; memory address of block map file
 wCurBlockMapPtr::
+    ds 2
+
+; memory address of warp map for current map
+;
+; first byte is count of warps
+wCurWarpMapPtr::
     ds 2
 
 ; block ID used to fill the border of the map
