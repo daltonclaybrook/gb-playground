@@ -60,18 +60,23 @@ PerformInitialSetup::
     ret
 
 SetupSampleMapValues::
-    ld a, SAFFRON_CITY_MAP
-    ; ld a, PALLET_TOWN_MAP_2
+    ; ld a, SAFFRON_CITY_MAP
+    ld a, PALLET_TOWN_MAP_2
     ld [wCurMap], a
 
-    ; ld a, $0b
-    ld a, $f
+    ld a, $b
+    ; ld a, $f
     ld [wMapBackgroundBlockID], a
 
-    ld a, 34
+    ld a, 5
     ld [wPlayerX], a
-    ld a, 4
+    ld a, 6
     ld [wPlayerY], a
+
+    ; ld a, 34
+    ; ld [wPlayerX], a
+    ; ld a, 4
+    ; ld [wPlayerY], a
     ret
 
 include "common.asm"
