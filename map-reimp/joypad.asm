@@ -36,13 +36,6 @@ ReadJoypad::
 ; hJoyReleased: (hJoyLast ^ hJoyInput) & hJoyLast
 ; hJoyPressed:  (hJoyLast ^ hJoyInput) & hJoyInput
 UpdateJoypadState::
-    ld a, [hJoyDisabled]
-    cpl ; $ff if joy is enabled
-    cp $ff
-    jr z, .advance
-    xor a
-.advance
-    ld c, a ; $ff if joy is enabled or $00 if not
     ld a, [hJoyInput]
     ld b, a
     ld a, [hJoyLast]
@@ -50,14 +43,11 @@ UpdateJoypadState::
     xor b
     ld d, a
     and e
-    and c ; unset if joy is disabled
     ld [hJoyReleased], a
     ld a, d
     and b
-    and c ; unset if joy is disabled
     ld [hJoyPressed], a
     ld a, b
-    and c ; unset if joy is disabled
     ld [hJoyLast], a
     ld [hJoyHeld], a
     ret
