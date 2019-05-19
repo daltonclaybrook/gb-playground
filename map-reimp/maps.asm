@@ -17,7 +17,7 @@ TilesetHeaders::
 MapHeaders::
     map OVERWORLD_TILESET, 10, 9, PalletTownBlockMap, PalletTownWarps
     map OVERWORLD_TILESET_2, 10, 9, PalletTownBlockMap, PalletTownWarps
-    map OVERWORLD_TILESET, 20, 18, SaffronCityBlockMap, PalletTownWarps
+    map OVERWORLD_TILESET, 20, 18, SaffronCityBlockMap, SaffronCityWarps
     map OVERWORLD_TILESET, 10, 9, CinnabarIslandBlockMap, PalletTownWarps
 
 OverworldBlocks::

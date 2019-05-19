@@ -9,6 +9,7 @@ UpdatePlayer::
     or b
     call nz, AdvancePlayer ; advance player if deltas are not zero
     call DrawPlayer
+    call WarpIfNecessary
     ret
 
 ; Advance the players position
@@ -45,28 +46,58 @@ UpdatePlayerCoordAndScrollIfNecessary::
     sla e
     add e
     ld [hSCX], a
-
 .updateCoordsOnZeroFrame
     ld a, 0
     cp [hl] ; check if we're on the first iteration
     ret nz
-
     ld a, [wPlayerY]
     add b
     ld [wPlayerY], a
     ld a, [wPlayerX]
     add c
     ld [wPlayerX], a
-    jr .zeroOutVariables
+    jr .zeroOutVariablesAndTryWarp
 .zeroOutVariablesWithCheck
     ld a, 0
     cp [hl] ; check if we're on the first iteration
     ret nz
-.zeroOutVariables
+.zeroOutVariablesAndTryWarp
     xor a
     ld [wPlayerDeltaY], a
     ld [wPlayerDeltaX], a
     ld [wPlayerIsColliding], a
+    ret
+
+WarpIfNecessary::
+    ld a, [wWalkCounter]
+    and a
+    ret nz ; return if not done walking
+    ld a, [wPlayerIsWarpingIndex]
+    cp -1
+    ret z ; return if not warping
+    call DisableLCD
+    ld b, a ; b = index of warp
+    ld a, -1
+    ld [wPlayerIsWarpingIndex], a ; reset is warping
+    ld c, 5 ; number of bytes in warp
+    call Multiply
+    ld bc, wCurMapWarpData
+    add hl, bc ; hl = first byte of warp
+    inc hl
+    inc hl ; increment hl twice. hl = index of map to warp to
+    ld a, [hli]
+    ld [wCurMap], a
+    ld a, [hli]
+    ld [wPlayerX], a
+    ld a, [hl]
+    ld [wPlayerY], a
+    ld a, DIRECTION_SOUTH
+    ld [wPlayerFacingDirection], a
+    xor a
+    ld [hSCX], a
+    ld [hSCY], a
+    call LoadMap
+    call EnableLCD
     ret
 
 ; Update the collision state variable

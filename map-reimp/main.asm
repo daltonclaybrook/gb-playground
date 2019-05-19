@@ -57,6 +57,9 @@ PerformInitialSetup::
 	ld [rIE], a
     ld [hSCX], a
     ld [hSCY], a
+    ; player is not warping
+    ld a, -1
+    ld [wPlayerIsWarpingIndex], a
     ret
 
 SetupSampleMapValues::
