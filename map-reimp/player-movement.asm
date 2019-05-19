@@ -76,6 +76,9 @@ WarpIfNecessary::
     cp -1
     ret z ; return if not warping
     ld b, a ; b = index of warp
+    ld a, 1
+    ld [hJoyDisabled], a
+    call FadeOutBackground
     ld a, -1
     ld [wPlayerIsWarpingIndex], a ; reset is warping
     ld c, 5 ; number of bytes in warp
@@ -90,14 +93,15 @@ WarpIfNecessary::
     ld [wPlayerX], a
     ld a, [hl]
     ld [wPlayerY], a
-    ld a, DIRECTION_SOUTH
-    ld [wPlayerFacingDirection], a
     xor a
     ld [hSCX], a
     ld [hSCY], a
     call DisableLCD
     call LoadMap
     call EnableLCD
+    call FadeInBackground
+    xor a
+    ld [hJoyDisabled], a
     ret
 
 ; Update the collision state variable

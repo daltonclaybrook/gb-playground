@@ -7,7 +7,7 @@ section "Map Loader", rom0
 LoadMap::
     call ResetMapViewVRAMPointer
     call ConfigureLCDForTileset
-    call ConfigureBGPalette
+    call ConfigureMainBGPalette
     call LoadMapMetadata
     call LoadWarpData
     call LoadMapBlocks
