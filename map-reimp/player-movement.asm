@@ -75,7 +75,6 @@ WarpIfNecessary::
     ld a, [wPlayerIsWarpingIndex]
     cp -1
     ret z ; return if not warping
-    call DisableLCD
     ld b, a ; b = index of warp
     ld a, -1
     ld [wPlayerIsWarpingIndex], a ; reset is warping
@@ -96,6 +95,7 @@ WarpIfNecessary::
     xor a
     ld [hSCX], a
     ld [hSCY], a
+    call DisableLCD
     call LoadMap
     call EnableLCD
     ret
